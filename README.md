@@ -1,4 +1,11 @@
+# What is this?
+
+This repo contains documents about a fake company called Galaxium Travels. Those documents are used to showcase a variety of capabilities of different generative AI approaches.
+
 # Galaxium Travels
+
+![Galaxium Travels Logo](99_images/logo.png)
+
 
 Welcome to Galaxium Travels, the premier luxury space travel experience provider. This repository contains various company assets and documentation that showcase our commitment to excellence in space tourism.
 

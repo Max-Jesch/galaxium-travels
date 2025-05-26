@@ -1,6 +1,6 @@
 # Galaxium Travels - Company Overview
 
-![Galaxium Travels Logo](logo.png)
+![Galaxium Travels Logo](../99_images/logo.png)
 
 ## Company Profile
 
