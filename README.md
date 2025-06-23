@@ -9,6 +9,9 @@ This repo contains documents about a fake company called Galaxium Travels. Those
 
 Welcome to Galaxium Travels, the premier luxury space travel experience provider. This repository contains various company assets and documentation that showcase our commitment to excellence in space tourism.
 
+## ToDos:
+- create simple pipeline to create realistic looking pdfs out of md. MD --> HTML --> weasyprint
+
 ## Company Structure
 
 - **Corporate Documents**: Company policies, mission statements, and strategic documents
