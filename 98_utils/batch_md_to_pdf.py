@@ -6,16 +6,15 @@ import fnmatch
 # Source directory for raw md files
 SOURCE_DIR = '97_raw_markdown_files'
 
-# Hardcoded ignore list (patterns relative to SOURCE_DIR, applied to filename only)
+# Hardcoded ignore list (patterns relative to SOURCE_DIR, applied to relative path)
 IGNORE_LIST = [
     'README.md',
-    # any file that has database in the name
-    'database*',
+    '*database*',
 ]
 
-def is_ignored(filename):
+def is_ignored(rel_path):
     for pattern in IGNORE_LIST:
-        if fnmatch.fnmatch(filename, pattern):
+        if fnmatch.fnmatch(rel_path, pattern):
             return True
     return False
 
@@ -23,8 +22,10 @@ def is_ignored(filename):
 md_files = []
 for root, dirs, files in os.walk(SOURCE_DIR):
     for file in files:
-        if file.endswith('.md') and not is_ignored(file):
-            md_files.append(os.path.join(root, file))
+        if file.endswith('.md'):
+            rel_path = os.path.relpath(os.path.join(root, file), SOURCE_DIR)
+            if not is_ignored(rel_path):
+                md_files.append((os.path.join(root, file), rel_path))
 
 if not md_files:
     print('No Markdown files found.')
@@ -34,9 +35,7 @@ print(f'Found {len(md_files)} Markdown files to convert.')
 
 success = 0
 fail = 0
-for src_path in md_files:
-    # Compute relative path from SOURCE_DIR, replace .md with .pdf, and prepend './'
-    rel_path = os.path.relpath(src_path, SOURCE_DIR)
+for src_path, rel_path in md_files:
     pdf_rel_path = os.path.splitext(rel_path)[0] + '.pdf'
     pdf_out_path = os.path.join('.', pdf_rel_path)
     os.makedirs(os.path.dirname(pdf_out_path), exist_ok=True)
