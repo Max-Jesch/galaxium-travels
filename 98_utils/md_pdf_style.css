@@ -1,0 +1,103 @@
+body {
+    font-family: 'Inter', 'Lato', Arial, sans-serif;
+    color: #222;
+    background: #fff;
+    margin: 2em;
+    font-size: 13pt;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', 'Exo 2', 'Segoe UI', Arial, sans-serif;
+    font-weight: 700;
+    color: #4A64FF;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+h1 { font-size: 2.2em; border-bottom: 2px solid #4A64FF; padding-bottom: 0.2em; }
+h2 { font-size: 1.6em; border-bottom: 1px solid #B23EFF; padding-bottom: 0.15em; }
+h3 { font-size: 1.3em; color: #B23EFF; }
+h4, h5, h6 { font-size: 1.1em; color: #64E2FF; }
+p {
+    margin: 0.7em 0;
+    line-height: 1.7;
+}
+ul, ol {
+    margin: 0.7em 2em;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    font-size: 0.98em;
+    box-shadow: 0 2px 8px #EAF2F8;
+}
+table, th, td {
+    border: 1px solid #B23EFF;
+}
+th, td {
+    padding: 0.5em 0.8em;
+    text-align: left;
+}
+th {
+    background: #EAF2F8;
+    color: #4A64FF;
+    font-weight: 600;
+}
+tr:nth-child(even) {
+    background: #F8F9F9;
+}
+code, pre {
+    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+    background: #F4F6F6;
+    color: #1A5276;
+    border-radius: 4px;
+}
+pre {
+    padding: 1em;
+    overflow-x: auto;
+    margin: 1em 0;
+    border: 1px solid #B23EFF;
+    background: #F8F9F9;
+}
+blockquote {
+    border-left: 4px solid #64E2FF;
+    background: #F9F9F9;
+    margin: 1em 0;
+    padding: 0.7em 1.2em;
+    color: #555;
+    font-style: italic;
+}
+a {
+    color: #4A64FF;
+    text-decoration: underline;
+}
+hr {
+    border: none;
+    border-top: 2px solid #D5DBDB;
+    margin: 2em 0;
+}
+.footer {
+    background: #EAF2F8;
+    color: #4A64FF;
+    font-size: 10pt;
+    text-align: center;
+    padding: 0.5em 0 0.5em 0;
+    width: 100%;
+    display: block;
+    border-top: 1px solid #B23EFF;
+    position: running(footer);
+}
+.footer img {
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 0.5em;
+}
+.footer::after {
+    content: "Page " counter(page);
+    margin-left: 0.5em;
+}
+@page {
+    @bottom-center {
+        content: element(footer);
+    }
+    margin-bottom: 2cm;
+} 
