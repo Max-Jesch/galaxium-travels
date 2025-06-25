@@ -10,7 +10,7 @@ This will recreate all the pdfs
 
 # Galaxium Travels
 
-![Galaxium Travels Logo](99_images/logo.png)
+![Galaxium Travels Logo](99_visual_assets/main_logo.png)
 
 
 Welcome to Galaxium Travels, the premier luxury space travel experience provider. This repository contains various company assets and documentation that showcase our commitment to excellence in space tourism.
