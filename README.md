@@ -2,6 +2,12 @@
 
 This repo contains documents about a fake company called Galaxium Travels. Those documents are used to showcase a variety of capabilities of different generative AI approaches.
 
+# How to work with this!
+
+If you want to change something do it in "97_raw_markdown_files" and then run "python 98_utils/batch_md_to_pdf.py".
+This will recreate all the pdfs
+
+
 # Galaxium Travels
 
 ![Galaxium Travels Logo](99_images/logo.png)
@@ -9,8 +15,7 @@ This repo contains documents about a fake company called Galaxium Travels. Those
 
 Welcome to Galaxium Travels, the premier luxury space travel experience provider. This repository contains various company assets and documentation that showcase our commitment to excellence in space tourism.
 
-## ToDos:
-- create simple pipeline to create realistic looking pdfs out of md. MD --> HTML --> weasyprint
+
 
 ## Company Structure
 
