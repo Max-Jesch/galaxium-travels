@@ -1,88 +1,55 @@
-# Galaxium Travels HR API
+# Galaxium Travels Infrastructure
 
-A simple HR database API that stores employee information in a Markdown file. This service is designed to demonstrate basic CRUD operations and can be used as a sample service for showcasing Agentic AI concepts.
+This repository contains infrastructure and demo applications for the imaginary space travel company, **Galaxium Travels**. It is designed to showcase agentic and generative AI capabilities in a modular, easy-to-deploy way.
 
-## Features
+The main repo is this https://github.com/Max-Jesch/galaxium-travels
 
-- Store employee data in a human-readable Markdown format
-- RESTful API endpoints for CRUD operations
-- Simple and lightweight implementation
-- Easy to deploy and maintain
+#TODO:
+- deploy this on code engine. Create the easiest possible startup script! 
 
-## Setup
+## Repository Structure
 
-1. Install the required dependencies:
-```bash
-pip install -r requirements.txt
+```
+galaxium-travels-infrastructure/
+  booking_system/    # FastAPI + SQLite demo booking system
+  HR_database/       # HR database app (details inside)
+  README.md          # This file
 ```
 
-2. Run the application:
-```bash
-python app.py
-```
+## Applications
 
-The API will be available at `http://localhost:8000`
+### 1. Booking System
+- **Path:** `booking_system/`
+- **Description:** A mock space travel booking system built with FastAPI and SQLite. Demonstrates core booking flows and is ready for agentic integration.
+- **Features:**
+  - List available flights
+  - Book a flight
+  - View user bookings
+  - Cancel a booking
+  - Auto-seeded demo data on startup
+- **See:** [`booking_system/README.md`](booking_system/README.md) for setup, usage, and deployment instructions.
 
-## API Endpoints
+### 2. HR Database
+- **Path:** `HR_database/`
+- **Description:** (Details and instructions inside the app directory.)
 
-- `GET /employees` - List all employees
-- `GET /employees/{employee_id}` - Get a specific employee
-- `POST /employees` - Create a new employee
-- `PUT /employees/{employee_id}` - Update an existing employee
-- `DELETE /employees/{employee_id}` - Delete an employee
+## Prerequisites
+- Python 3.9+
+- [pip](https://pip.pypa.io/en/stable/)
+- (Optional) [Fly.io CLI](https://fly.io/docs/hands-on/install-flyctl/) for cloud deployment
 
-## API Documentation
+## Local Development
+Each app is self-contained. To run an app locally:
+1. `cd` into the app directory (e.g., `cd booking_system`)
+2. Follow the instructions in that app's `README.md`
 
-Once the server is running, you can access the interactive API documentation at:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+## Deployment
+- Each app can be deployed independently to Fly.io or another platform.
+- See the per-app `README.md` for deployment steps and configuration.
 
-## Data Structure
+## Contributing
+Feel free to fork, open issues, or submit pull requests for improvements or new demo apps!
 
-The employee data is stored in `data/employees.md` with the following fields:
-- ID
-- First Name
-- Last Name
-- Department
-- Position
-- Hire Date
-- Salary
+---
 
-## Deployment to Fly.io
-
-1. Install the Fly.io CLI:
-```bash
-# For Windows (PowerShell)
-iwr https://fly.io/install.ps1 -useb | iex
-```
-
-2. Login to Fly.io:
-```bash
-fly auth login
-```
-
-3. Launch the application:
-```bash
-fly launch
-```
-
-4. Deploy the application:
-```bash
-fly deploy
-```
-
-The application will be available at `https://galaxium-hr-api.fly.dev`
-
-### Configuration
-
-The application is configured to:
-- Run in the Frankfurt region (fra)
-- Use a shared CPU with 256MB of memory
-- Auto-stop when not in use to save costs
-- Force HTTPS for all connections
-
-### Important Notes
-
-- The data is stored in a Markdown file, which means it will be reset when the application is redeployed
-- For production use, consider using a persistent storage solution like Fly Volumes
-- The application is configured to scale to zero when not in use to minimize costs 
+**This repository is for demonstration and prototyping purposes only.** 
