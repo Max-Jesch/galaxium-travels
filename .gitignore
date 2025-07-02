@@ -30,6 +30,7 @@ ENV/
 env.bak/
 venv.bak/
 
+
 # PyInstaller
 *.manifest
 *.spec
@@ -132,3 +133,5 @@ fly.toml
 # System files
 Thumbs.db
 desktop.ini 
+
+.env
