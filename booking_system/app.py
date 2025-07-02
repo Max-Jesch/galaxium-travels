@@ -37,6 +37,17 @@ class BookingOut(BaseModel):
     class Config:
         orm_mode = True
 
+class UserIn(BaseModel):
+    name: str
+    email: str
+
+class UserOut(BaseModel):
+    user_id: int
+    name: str
+    email: str
+    class Config:
+        orm_mode = True
+
 @app.get(
     "/flights",
     response_model=list[FlightOut],
@@ -102,4 +113,20 @@ def cancel_booking(booking_id: int, db: Session = Depends(get_db)):
     booking.status = "cancelled"
     db.commit()
     db.refresh(booking)
-    return booking 
+    return booking
+
+@app.post(
+    "/register",
+    response_model=UserOut,
+    summary="Register a new user",
+    description="Register a new user with a name and unique email. Returns the created user."
+)
+def register_user(user: UserIn, db: Session = Depends(get_db)):
+    existing = db.query(User).filter(User.email == user.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    new_user = User(name=user.name, email=user.email)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user 
