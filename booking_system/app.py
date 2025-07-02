@@ -26,6 +26,7 @@ class FlightOut(BaseModel):
 
 class BookingIn(BaseModel):
     user_id: int
+    name: str
     flight_id: int
 
 class BookingOut(BaseModel):
@@ -61,7 +62,7 @@ def list_flights(db: Session = Depends(get_db)):
     "/book",
     response_model=BookingOut,
     summary="Book a flight for a user",
-    description="Book a seat on a specific flight for a user. Requires user_id and flight_id in the request body. If the flight has available seats, a new booking is created and the number of available seats is decremented by one. Returns the booking details."
+    description="Book a seat on a specific flight for a user. Requires user_id, name, and flight_id in the request body. If the flight has available seats and the user_id matches the name, a new booking is created and the number of available seats is decremented by one. Returns the booking details."
 )
 def book_flight(booking: BookingIn, db: Session = Depends(get_db)):
     flight = db.query(Flight).filter(Flight.flight_id == booking.flight_id).first()
@@ -69,9 +70,9 @@ def book_flight(booking: BookingIn, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Flight not found")
     if flight.seats_available < 1:
         raise HTTPException(status_code=400, detail="No seats available")
-    user = db.query(User).filter(User.user_id == booking.user_id).first()
+    user = db.query(User).filter(User.user_id == booking.user_id, User.name == booking.name).first()
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not found or name does not match user ID")
     # Decrement seat
     flight.seats_available -= 1
     new_booking = Booking(
@@ -129,4 +130,16 @@ def register_user(user: UserIn, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user 
+    return new_user
+
+@app.get(
+    "/user_id",
+    response_model=UserOut,
+    summary="Get user by name and email",
+    description="Retrieve a user's information (including user_id) by providing both name and email. Returns 404 if not found."
+)
+def get_user_id(name: str, email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.name == name, User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user 
