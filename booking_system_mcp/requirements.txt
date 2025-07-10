@@ -4,4 +4,4 @@ sqlalchemy
 databases
 pydantic
 python-dotenv
-mcp[cli] 
+fastmcp 
