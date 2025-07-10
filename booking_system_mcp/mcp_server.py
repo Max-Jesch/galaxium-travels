@@ -4,6 +4,8 @@ from db import SessionLocal, init_db
 from seed import seed
 from models import User, Flight, Booking
 from datetime import datetime
+from starlette.requests import Request
+from starlette.responses import PlainTextResponse
 
 mcp = FastMCP("Booking System MCP")
 
@@ -147,6 +149,10 @@ def get_user_id(name: str, email: str) -> UserOut:
     out = UserOut.from_orm(user)
     db.close()
     return out
+
+@mcp.custom_route("/", methods=["GET"])
+async def root_health_check(request: Request) -> PlainTextResponse:
+    return PlainTextResponse("OK")
 
 # Initialize DB and seed data on startup
 init_db()
