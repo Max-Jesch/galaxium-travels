@@ -4,7 +4,7 @@
 
 ## Company Profile
 
-Founded in 2025, Galaxium Travels has established itself as the premier luxury space travel experience provider. Our company combines cutting-edge space technology with unparalleled luxury service to create unforgettable journeys beyond Earth's atmosphere.
+Founded in 2120, Galaxium Travels has established itself as the premier luxury space travel experience provider. Our company combines cutting-edge space technology with unparalleled luxury service to create unforgettable journeys beyond Earth's atmosphere.
 
 ## Mission Statement
 
