@@ -101,7 +101,7 @@ Upon completion of this program, participants will be able to:
 **Target Audience**: Safety officers, supervisors  
 **Duration**: 80 hours  
 **Validity**: 1 year  
-**Prerequisites**: Level 2 certification + 2 years experience
+**Prerequisites**: Level 2 certification + experience
 
 #### Curriculum
 - **Safety Management Systems** (16 hours)

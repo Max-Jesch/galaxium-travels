@@ -88,8 +88,8 @@ The Lunar Luxury Package is Galaxium Travels' signature space adventure, combini
 
 ### Common Areas
 - **Observation Deck**: 100 square meters with panoramic views
-- **Zero-G Pool**: 3m x 2m swimming area
-- **Fine Dining Restaurant**: Michelin-starred cuisine with wine
+- **Swimming Area**: Recreational water activities
+- **Fine Dining Restaurant**: Gourmet cuisine with wine
 - **Spa and Wellness Center**: Zero-gravity treatments and relaxation
 - **Virtual Reality Suite**: Immersive entertainment experiences
 - **Library and Relaxation Zones**: Quiet areas for reflection
@@ -98,7 +98,7 @@ The Lunar Luxury Package is Galaxium Travels' signature space adventure, combini
 
 ### Luxury Amenities
 - **Personal Space Concierge**: Dedicated service throughout mission
-- **Fine Dining**: Michelin-starred space cuisine with champagne
+- **Fine Dining**: Gourmet space cuisine with champagne
 - **Entertainment**: Live performances and cultural events
 - **Spa Services**: Zero-gravity massage and relaxation
 - **Shopping**: Exclusive lunar memorabilia and gifts

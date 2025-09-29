@@ -108,15 +108,10 @@ Galaxium Travels has established strategic partnerships with leading aerospace c
 - Cultural sensitivity training
 - Premium amenity sourcing
 
-#### Michelin-Starred Culinary Partners
+#### Culinary Partners
 **Partnership Type**: Space Cuisine Development  
 **Duration**: 3-year renewable agreement (2025-2028)  
 **Value**: $10 million development investment
-
-**Partner Chefs**:
-- Chef Thomas Keller (The French Laundry)
-- Chef Grant Achatz (Alinea)
-- Chef Dominique Crenn (Atelier Crenn)
 
 **Services Provided**:
 - Zero-gravity cuisine development

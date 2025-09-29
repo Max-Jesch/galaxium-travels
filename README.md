@@ -177,6 +177,78 @@ graph LR
 - **Content Generation** - Generate responses based on company knowledge
 - **Document Analysis** - Analyze business processes and procedures
 
+### 🕸️ Graph RAG Demonstration Setup
+
+This knowledge base is specifically designed to showcase **Graph RAG (Retrieval-Augmented Generation)** capabilities by creating complex, interconnected information that requires relationship navigation.
+
+#### **Why Graph RAG is Superior Here**
+
+Traditional vector-based RAG struggles with questions that require connecting information across multiple documents. This knowledge base demonstrates Graph RAG's ability to:
+
+- **Navigate Entity Relationships** - Connect spacecraft → services → partnerships → personnel
+- **Perform Multi-hop Reasoning** - Answer complex questions requiring 3+ document connections
+- **Provide Explainable Paths** - Show exactly which documents and relationships led to answers
+- **Handle Conditional Logic** - Process "if-then" scenarios across document boundaries
+
+#### **Strategic Information Hiding**
+
+To create realistic Graph RAG challenges, key information has been strategically scattered:
+
+| **Question Type** | **Visible Information** | **Hidden Information Location** | **Graph RAG Challenge** |
+|------------------|------------------------|-------------------------------|------------------------|
+| **Spacecraft Amenities** | "Swimming Area" (generic) | Voyager specs (3m x 2m zero-g pool) | Connect spacecraft → service packages |
+| **Luxury Services** | "Gourmet cuisine" (generic) | Partnership docs (Michelin chefs) | Connect partnerships → service delivery |
+| **Safety Requirements** | Basic training levels | Specific certification requirements | Trace safety protocols across documents |
+| **Emergency Procedures** | General response info | Specific team assignments and protocols | Link emergency procedures to spacecraft/missions |
+
+#### **Perfect Graph RAG Demo Questions**
+
+**Complex Multi-hop Questions:**
+- *"When flying to the Moon, does the Voyager spacecraft offer zero-gravity swimming pools?"*
+  - Requires: Voyager specs + Lunar Luxury Package + Amenity details
+  - Graph RAG connects: Spacecraft → Mission type → Service amenities
+
+- *"What safety training is required for crew operating the Voyager on lunar missions?"*
+  - Requires: Voyager specs + Safety certification + Mission requirements + Crew database
+  - Graph RAG connects: Spacecraft → Mission type → Safety requirements → Training levels
+
+- *"If there's a medical emergency on the Aurora Explorer, which medical team responds?"*
+  - Requires: Aurora specs + Crisis response plan + Medical partnerships + Staff assignments
+  - Graph RAG connects: Spacecraft → Emergency procedures → Medical resources → Personnel
+
+**Entity Relationship Questions:**
+- *"What luxury services are provided for lunar missions and who are the partners?"*
+- *"How much does it cost to operate a lunar mission with the Voyager, including crew salaries?"*
+- *"What's the complete customer journey for a Lunar Luxury Package, including all safety requirements?"*
+
+#### **Information Scattering Strategy**
+
+**Documents with Hidden Connections:**
+- **Spacecraft Specs** - Technical details but missing service connections
+- **Service Packages** - Customer offerings but missing technical specifications  
+- **Partnerships** - Business relationships but missing service delivery details
+- **Safety Protocols** - Training requirements but missing spacecraft-specific details
+- **Employee Database** - Personnel info but missing certification assignments
+- **Crisis Response** - Emergency procedures but missing spacecraft-specific protocols
+
+**Why This Demonstrates Graph RAG Value:**
+1. **Real-world Complexity** - Information is naturally scattered across departments
+2. **Multi-hop Reasoning** - Questions require connecting 3-6 different document types
+3. **Entity Relationships** - Clear connections between people, equipment, procedures, and outcomes
+4. **Explainable AI** - Can trace reasoning paths for compliance and auditing
+5. **Dynamic Updates** - When one element changes, can trace all affected relationships
+
+#### **Graph RAG vs Traditional RAG**
+
+| **Capability** | **Traditional RAG** | **Graph RAG** |
+|----------------|-------------------|---------------|
+| **Simple Q&A** | ✅ Excellent | ✅ Excellent |
+| **Multi-hop Questions** | ❌ Struggles | ✅ Excels |
+| **Entity Relationships** | ❌ Limited | ✅ Strong |
+| **Explainable Paths** | ❌ Black box | ✅ Clear reasoning |
+| **Conditional Logic** | ❌ Poor | ✅ Excellent |
+| **Complex Dependencies** | ❌ Misses connections | ✅ Navigates relationships |
+
 ### Business Applications
 - **Training Development** - Create employee training materials
 - **Process Documentation** - Document business workflows
