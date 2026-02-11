@@ -191,6 +191,7 @@ The system uses a **service layer** pattern:
 ### Key Design Patterns
 
 - **Union Return Types**: All service functions return `ModelOut | ErrorResponse`, never raise exceptions
+- **Email Normalization**: All email addresses are automatically converted to lowercase for case-insensitive lookups
 - **Manual Session Management**: MCP tools use `SessionLocal()` directly with try/finally blocks
 - **Hardcoded Multipliers**: Seat class multipliers defined in `booking.py:8-12` (not configurable)
 - **Integer Pricing**: `int(base_price * multiplier)`, no decimal handling
