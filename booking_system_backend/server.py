@@ -4,10 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastmcp import FastMCP
 from sqlalchemy.orm import Session
 from typing import Union, Optional
+from dotenv import load_dotenv
+import os
 from db import SessionLocal, init_db, get_db
 from seed import seed
 from services import flight, user, booking
 from schemas import FlightOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # ==================== MCP SERVER (for AI agents) ====================
@@ -119,12 +124,16 @@ app = FastAPI(
     title="Galaxium Booking System",
     description="API for booking interplanetary flights. Swagger UI available at /docs",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    root_path="/api"  # Add this for ALB routing
 )
+
+# Get allowed origins from environment
+allowed_origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
