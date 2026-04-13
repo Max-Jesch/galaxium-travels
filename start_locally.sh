@@ -23,18 +23,24 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
+# Check if Maven is installed
+if ! command -v mvn &> /dev/null; then
+    echo "❌ Maven is not installed. Please install Maven first."
+    exit 1
+fi
+
 # Function to cleanup on exit
 cleanup() {
     echo ""
     echo "🛑 Shutting down servers..."
-    kill $BACKEND_PID $FRONTEND_PID 2>/dev/null
-    rm -f booking_system_backend/backend.log
+    kill $BACKEND_PID $FRONTEND_PID $JAVA_PID 2>/dev/null
+    rm -f booking_system_backend/backend.log inventory_hold_service/java.log
     exit 0
 }
 
 trap cleanup SIGINT SIGTERM
 
-# Kill any existing processes on ports 8001 and 5173
+# Kill any existing processes on ports 8001, 5173, and 8080
 EXISTING_BACKEND=$(lsof -ti :8001 2>/dev/null)
 if [ -n "$EXISTING_BACKEND" ]; then
     echo "Stopping existing backend process on port 8001..."
@@ -45,6 +51,12 @@ EXISTING_FRONTEND=$(lsof -ti :5173 2>/dev/null)
 if [ -n "$EXISTING_FRONTEND" ]; then
     echo "Stopping existing frontend process on port 5173..."
     echo "$EXISTING_FRONTEND" | xargs kill -9 2>/dev/null
+    sleep 1
+fi
+EXISTING_JAVA=$(lsof -ti :8080 2>/dev/null)
+if [ -n "$EXISTING_JAVA" ]; then
+    echo "Stopping existing Java service process on port 8080..."
+    echo "$EXISTING_JAVA" | xargs kill -9 2>/dev/null
     sleep 1
 fi
 
@@ -79,6 +91,28 @@ cd ..
 echo -e "${GREEN}✅ Backend started on http://localhost:8001${NC}"
 echo ""
 
+# Start Java Hold Service
+echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
+cd inventory_hold_service
+mvn -q spring-boot:run > java.log 2>&1 &
+JAVA_PID=$!
+
+# Wait for Java service to start and verify
+sleep 8
+if ! curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
+    # Try the root path as fallback
+    if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
+        echo "❌ Java Hold Service failed to start. Check inventory_hold_service/java.log for errors:"
+        cat java.log
+        kill $BACKEND_PID $JAVA_PID 2>/dev/null
+        exit 1
+    fi
+fi
+
+cd ..
+echo -e "${GREEN}✅ Java Hold Service started on http://localhost:8080${NC}"
+echo ""
+
 # Start Frontend
 echo -e "${BLUE}🎨 Starting Frontend Server...${NC}"
 cd booking_system_frontend
@@ -99,14 +133,15 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🌟 Galaxium Travels is running!"
 echo ""
-echo "   Backend:  http://localhost:8001"
-echo "   Frontend: http://localhost:5173"
-echo "   API Docs: http://localhost:8001/docs"
+echo "   Backend:       http://localhost:8001"
+echo "   Frontend:      http://localhost:5173"
+echo "   API Docs:      http://localhost:8001/docs"
+echo "   Hold Service:  http://localhost:8080"
 echo ""
 echo "Press Ctrl+C to stop all servers"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Wait for both processes
-wait $BACKEND_PID $FRONTEND_PID
+# Wait for all processes
+wait $BACKEND_PID $FRONTEND_PID $JAVA_PID
 
 # Made with Bob

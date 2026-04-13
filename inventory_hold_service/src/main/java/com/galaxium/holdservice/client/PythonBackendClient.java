@@ -1,5 +1,6 @@
 package com.galaxium.holdservice.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class PythonBackendClient {
 
     public BookingResponse createBookingFromHold(Map<String, Object> holdData) {
         try {
-            String url = pythonBackendUrl + "/api/internal/bookings/from-hold";
+            String url = pythonBackendUrl + "/internal/bookings/from-hold";
             String requestBody = objectMapper.writeValueAsString(holdData);
 
             log.info("Calling Python backend to create booking: {}", url);
@@ -57,10 +58,13 @@ public class PythonBackendClient {
     }
 
     public static class BookingResponse {
+        @JsonProperty("booking_id")
         private Integer bookingId;
+        @JsonProperty("user_id")
         private Integer userId;
-        private String name;
+        @JsonProperty("flight_id")
         private Integer flightId;
+        @JsonProperty("seat_class")
         private String seatClass;
         private String status;
 
@@ -69,8 +73,6 @@ public class PythonBackendClient {
         public void setBookingId(Integer bookingId) { this.bookingId = bookingId; }
         public Integer getUserId() { return userId; }
         public void setUserId(Integer userId) { this.userId = userId; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
         public Integer getFlightId() { return flightId; }
         public void setFlightId(Integer flightId) { this.flightId = flightId; }
         public String getSeatClass() { return seatClass; }

@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastmcp import FastMCP
 from sqlalchemy.orm import Session
@@ -276,19 +276,23 @@ def get_user_endpoint(name: str, email: str, db: Session = Depends(get_db)):
 JAVA_SERVICE_URL = os.getenv("JAVA_SERVICE_URL", "http://localhost:8080")
 
 
-@app.post("/internal/bookings/from-hold", response_model=Union[BookingOut, ErrorResponse], tags=["Internal"])
+@app.post("/internal/bookings/from-hold", response_model=BookingOut, tags=["Internal"])
 def create_booking_from_hold(hold_data: dict, db: Session = Depends(get_db)):
     """Internal endpoint for Java hold service to create bookings.
-    
+
     This endpoint is called by the Java inventory hold service when confirming a hold.
+    Returns HTTP 400 on booking failure so the Java service can detect and propagate the error.
     """
-    return booking.book_flight(
+    result = booking.book_flight(
         db,
         user_id=hold_data["travelerId"],
         name=hold_data["travelerName"],
         flight_id=hold_data["flightId"],
         seat_class=hold_data["seatClass"]
     )
+    if isinstance(result, ErrorResponse):
+        raise HTTPException(status_code=400, detail=result.model_dump())
+    return result
 
 
 # ==================== JAVA SERVICE PROXY ENDPOINTS ====================

@@ -11,11 +11,11 @@ import random
 def seed():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    # Clear existing data
-    db.query(Booking).delete()
-    db.query(User).delete()
-    db.query(Flight).delete()
-    db.commit()
+    # Only seed if the database is empty to avoid wiping registered users
+    if db.query(User).count() > 0:
+        print("Database already has data — skipping seed.")
+        db.close()
+        return
     # Add demo users
     users = [
         User(name="Alice", email="alice@example.com"),

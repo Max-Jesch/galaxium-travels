@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "audit_events")
@@ -17,9 +19,9 @@ import java.time.Instant;
 public class AuditEvent {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "event_id")
-    private Long eventId;
+    @UuidGenerator
+    @Column(name = "event_id", length = 36)
+    private String eventId;
 
     @Column(name = "entity_type", nullable = false, length = 50)
     private String entityType;
