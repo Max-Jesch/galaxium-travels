@@ -23,12 +23,6 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# Check if Maven is installed
-if ! command -v mvn &> /dev/null; then
-    echo "❌ Maven is not installed. Please install Maven first."
-    exit 1
-fi
-
 # Function to cleanup on exit
 cleanup() {
     echo ""
@@ -98,28 +92,33 @@ echo ""
 # Start Java Hold Service (if it exists)
 JAVA_PID=""
 if [ -d "booking_system_inventory_hold_service" ] && [ -f "booking_system_inventory_hold_service/pom.xml" ]; then
-    echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
-    cd booking_system_inventory_hold_service
-    mvn -q spring-boot:run > java.log 2>&1 &
-    JAVA_PID=$!
+    if ! command -v mvn &> /dev/null; then
+        echo "⚠️  Maven is not installed. Skipping Java Hold Service..."
+        echo ""
+    else
+        echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
+        cd booking_system_inventory_hold_service
+        mvn -q spring-boot:run > java.log 2>&1 &
+        JAVA_PID=$!
 
-    # Wait for Java service to start and verify
-    sleep 8
-    if ! curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
-        # Try the root path as fallback
-        if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
-            echo "⚠️  Java Hold Service failed to start. Check booking_system_inventory_hold_service/java.log for errors:"
-            cat java.log
-            echo "⚠️  Continuing without Java Hold Service..."
-            JAVA_PID=""
+        # Wait for Java service to start and verify
+        sleep 8
+        if ! curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
+            # Try the root path as fallback
+            if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
+                echo "⚠️  Java Hold Service failed to start. Check booking_system_inventory_hold_service/java.log for errors:"
+                cat java.log
+                echo "⚠️  Continuing without Java Hold Service..."
+                JAVA_PID=""
+            fi
         fi
-    fi
 
-    cd ..
-    if [ -n "$JAVA_PID" ]; then
-        echo -e "${GREEN}✅ Java Hold Service started on http://localhost:8080${NC}"
+        cd ..
+        if [ -n "$JAVA_PID" ]; then
+            echo -e "${GREEN}✅ Java Hold Service started on http://localhost:8080${NC}"
+        fi
+        echo ""
     fi
-    echo ""
 else
     echo -e "${BLUE}ℹ️  Java Hold Service not found - skipping${NC}"
     echo ""

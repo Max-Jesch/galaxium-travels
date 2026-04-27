@@ -32,7 +32,7 @@ A modern, space-themed frontend for the Galaxium Travels interplanetary booking 
 ## 📋 Prerequisites
 
 - Node.js 18+ and npm
-- Backend server running on `http://localhost:8080` (or configure `VITE_API_URL`)
+- Backend server running on `http://localhost:8001` (or configure `VITE_API_URL`)
 
 ## 🚀 Quick Start
 
@@ -47,7 +47,7 @@ npm install
 Create a `.env` file (or use the existing one):
 
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=http://localhost:8001
 ```
 
 ### 3. Start Development Server
@@ -133,12 +133,12 @@ All components follow a consistent design pattern with:
 
 The frontend connects to the backend API with the following endpoints:
 
-- `GET /api/flights` - List all flights with seat class availability
-- `POST /api/register` - Register new user
-- `GET /api/user?name=...&email=...` - Get user by credentials
-- `POST /api/book` - Book a flight with seat class selection
-- `GET /api/bookings/{user_id}` - Get user's bookings
-- `POST /api/cancel/{booking_id}` - Cancel a booking
+- `GET /flights` - List all flights with seat class availability
+- `POST /register` - Register new user
+- `GET /user?name=...&email=...` - Get user by credentials
+- `POST /book` - Book a flight with seat class selection
+- `GET /bookings/{user_id}` - Get user's bookings
+- `POST /cancel/{booking_id}` - Cancel a booking
 
 ### API Response Handling
 

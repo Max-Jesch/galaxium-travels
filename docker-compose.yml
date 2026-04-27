@@ -19,7 +19,7 @@ services:
     build: ./booking_system_backend
     platform: linux/amd64
     ports:
-      - "8001:8000"
+      - "8001:8080"
     environment:
       DATABASE_URL: postgresql://galaxium:local_dev_password@postgres:5432/galaxium_booking
       CORS_ORIGINS: http://localhost:5173,http://localhost
@@ -29,18 +29,20 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/api/', timeout=2)"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/', timeout=2)"]
       interval: 30s
       timeout: 3s
       retries: 3
 
   java-service:
-    build: ./inventory_hold_service
+    profiles:
+      - hold-service
+    build: ./booking_system_inventory_hold_service
     platform: linux/amd64
     ports:
       - "8082:8080"
     environment:
-      PYTHON_BACKEND_URL: http://backend:8000
+      PYTHON_BACKEND_URL: http://backend:8080
       SPRING_DATASOURCE_URL: jdbc:sqlite:/app/data/holds.db
     depends_on:
       - backend
@@ -53,16 +55,17 @@ services:
       - java_data:/app/data
 
   frontend:
-    build: ./booking_system_frontend
+    build:
+      context: ./booking_system_frontend
+      args:
+        VITE_API_URL: http://localhost:8001
     platform: linux/amd64
     ports:
-      - "5173:80"
-    environment:
-      VITE_API_URL: http://localhost:8001
+      - "5173:8080"
     depends_on:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
       interval: 30s
       timeout: 3s
       retries: 3

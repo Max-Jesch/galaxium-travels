@@ -66,7 +66,7 @@ main() {
     
     print_info "Building Java service..."
     print_warning "This takes 5-7 minutes (Maven build)..."
-    docker build --platform linux/amd64 -t galaxium-hold-service:latest ./inventory_hold_service
+    docker build --platform linux/amd64 -t galaxium-hold-service:latest ./booking_system_inventory_hold_service
     
     print_success "All images built"
     
@@ -114,7 +114,7 @@ main() {
         ibmcloud ce application update \
             --name "$JAVA_APP" \
             --build-source . \
-            --build-context-dir inventory_hold_service \
+            --build-context-dir booking_system_inventory_hold_service \
             --cpu 0.5 \
             --memory 1G \
             --port 8080 \
@@ -126,7 +126,7 @@ main() {
         ibmcloud ce application create \
             --name "$JAVA_APP" \
             --build-source . \
-            --build-context-dir inventory_hold_service \
+            --build-context-dir booking_system_inventory_hold_service \
             --cpu 0.5 \
             --memory 1G \
             --port 8080 \
@@ -188,7 +188,7 @@ main() {
     echo -e "${GREEN}✓ All services deployed${NC}\n"
     echo -e "${BLUE}URLs:${NC}"
     echo -e "  Frontend:     $FRONTEND_URL"
-    echo -e "  Backend:      $BACKEND_URL/api/"
+    echo -e "  Backend:      $BACKEND_URL/"
     echo -e "  Java Service: $JAVA_URL/api/v1/"
     echo ""
     echo -e "${YELLOW}Note:${NC} First request may take 10-30 seconds (cold start)"

@@ -29,8 +29,8 @@ pip install -r requirements.txt
 python server.py
 ```
 
-The server starts on port **8080** with:
-- REST endpoints at `/api/*`
+The server starts on port **8001** with:
+- REST endpoints at the root path
 - MCP tools at `/mcp`
 - Health check at `/`
 
@@ -41,12 +41,12 @@ The server starts on port **8080** with:
 | Method | Endpoint | Description | Request Body |
 |--------|----------|-------------|--------------|
 | GET | `/` | Health check | - |
-| GET | `/api/flights` | List all available flights with seat class availability | - |
-| POST | `/api/book` | Book a flight with specific seat class | `{user_id, name, flight_id, seat_class}` |
-| GET | `/api/bookings/{user_id}` | Get user's bookings | - |
-| POST | `/api/cancel/{booking_id}` | Cancel a booking (restores seat availability) | - |
-| POST | `/api/register` | Register a new user | `{name, email}` |
-| GET | `/api/user?name=...&email=...` | Get user by name and email | - |
+| GET | `/flights` | List all available flights with seat class availability | - |
+| POST | `/book` | Book a flight with specific seat class | `{user_id, name, flight_id, seat_class}` |
+| GET | `/bookings/{user_id}` | Get user's bookings | - |
+| POST | `/cancel/{booking_id}` | Cancel a booking (restores seat availability) | - |
+| POST | `/register` | Register a new user | `{name, email}` |
+| GET | `/user?name=...&email=...` | Get user by name and email | - |
 
 **Seat Class Parameter**: Must be one of `"economy"`, `"business"`, or `"galaxium"` (case-sensitive)
 
@@ -67,28 +67,28 @@ The server starts on port **8080** with:
 
 ```bash
 # List flights
-curl http://localhost:8080/api/flights
+curl http://localhost:8001/flights
 
 # Register a user
-curl -X POST http://localhost:8080/api/register \
+curl -X POST http://localhost:8001/register \
   -H "Content-Type: application/json" \
   -d '{"name": "John Doe", "email": "john@example.com"}'
 
 # Book a flight (with seat class)
-curl -X POST http://localhost:8080/api/book \
+curl -X POST http://localhost:8001/book \
   -H "Content-Type: application/json" \
   -d '{"user_id": 1, "name": "Alice", "flight_id": 1, "seat_class": "economy"}'
 
 # Get bookings
-curl http://localhost:8080/api/bookings/1
+curl http://localhost:8001/bookings/1
 
 # Cancel a booking
-curl -X POST http://localhost:8080/api/cancel/1
+curl -X POST http://localhost:8001/cancel/1
 ```
 
 ### MCP (with Claude Code or MCP Inspector)
 
-Connect to `http://localhost:8080/mcp` and use the available tools:
+Connect to `http://localhost:8001/mcp` and use the available tools:
 
 ```
 list_flights()

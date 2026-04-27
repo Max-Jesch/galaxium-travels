@@ -38,7 +38,7 @@ echo ""
 
 # Test backend health
 echo "Testing backend health endpoint..."
-BACKEND_HEALTH=$(curl -s http://localhost:8080/)
+BACKEND_HEALTH=$(curl -s http://localhost:8001/)
 if [[ $BACKEND_HEALTH == *"OK"* ]]; then
     echo "✅ Backend health check passed"
 else
@@ -49,7 +49,7 @@ fi
 
 # Test backend API
 echo "Testing backend /flights endpoint..."
-FLIGHTS=$(curl -s http://localhost:8080/flights)
+FLIGHTS=$(curl -s http://localhost:8001/flights)
 if [[ $FLIGHTS == *"flight_id"* ]]; then
     echo "✅ Backend API working ($(echo $FLIGHTS | grep -o '"flight_id"' | wc -l | tr -d ' ') flights found)"
 else
@@ -60,7 +60,7 @@ fi
 
 # Test frontend
 echo "Testing frontend..."
-FRONTEND=$(curl -s http://localhost:3000/)
+FRONTEND=$(curl -s http://localhost:5173/)
 if [[ $FRONTEND == *"<div id=\"root\">"* ]]; then
     echo "✅ Frontend serving correctly"
 else
@@ -71,7 +71,7 @@ fi
 
 # Test frontend health
 echo "Testing frontend health endpoint..."
-FRONTEND_HEALTH=$(curl -s http://localhost:3000/health)
+FRONTEND_HEALTH=$(curl -s http://localhost:5173/health)
 if [[ $FRONTEND_HEALTH == "healthy" ]]; then
     echo "✅ Frontend health check passed"
 else
@@ -79,13 +79,13 @@ else
     exit 1
 fi
 
-# Test API proxy through frontend
-echo "Testing API proxy (frontend -> backend)..."
-API_PROXY=$(curl -s http://localhost:3000/api/flights)
+# Test API directly using the host port published by docker-compose
+echo "Testing backend API from host..."
+API_PROXY=$(curl -s http://localhost:8001/flights)
 if [[ $API_PROXY == *"flight_id"* ]]; then
-    echo "✅ API proxy working correctly"
+    echo "✅ Backend API working correctly"
 else
-    echo "❌ API proxy failed"
+    echo "❌ Backend API failed"
     docker-compose logs frontend
     docker-compose logs backend
     exit 1
@@ -100,9 +100,9 @@ echo ""
 echo "✅ All tests passed!"
 echo ""
 echo "🌐 Access the application:"
-echo "   Frontend: http://localhost:3000"
-echo "   Backend:  http://localhost:8080"
-echo "   API Docs: http://localhost:8080/docs"
+echo "   Frontend: http://localhost:5173"
+echo "   Backend:  http://localhost:8001"
+echo "   API Docs: http://localhost:8001/docs"
 echo ""
 echo "📝 To view logs: docker-compose logs -f"
 echo "🛑 To stop:      docker-compose down"

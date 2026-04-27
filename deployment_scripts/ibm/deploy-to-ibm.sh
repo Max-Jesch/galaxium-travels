@@ -229,7 +229,7 @@ build_and_push_frontend() {
 build_and_push_java_service() {
     print_header "Building and Pushing Java Hold Service Image"
     
-    cd inventory_hold_service
+    cd booking_system_inventory_hold_service
     
     local image_name="${REGISTRY_URL}/galaxium-hold-service:latest"
     
@@ -487,7 +487,7 @@ validate_deployment() {
     
     # Test backend API
     print_info "Testing backend API..."
-    backend_status=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/api/" || echo "000")
+    backend_status=$(curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/" || echo "000")
     
     if [ "$backend_status" = "200" ]; then
         print_success "Backend API is responding (HTTP $backend_status)"
@@ -522,7 +522,7 @@ print_summary() {
     echo -e "${GREEN}✓ Deployment completed successfully!${NC}\n"
     echo -e "${BLUE}Application URLs:${NC}"
     echo -e "  Frontend:     $FRONTEND_URL"
-    echo -e "  Backend API:  $BACKEND_URL/api/"
+    echo -e "  Backend API:  $BACKEND_URL/"
     echo -e "  Java Service: $JAVA_URL/api/v1/"
     echo ""
     echo -e "${BLUE}Architecture:${NC}"

@@ -33,7 +33,7 @@ galaxium-travels/
 │   │   └── types/            # TypeScript definitions
 │   └── dist/                 # Production build
 │
-├── inventory_hold_service/    # Java hold service (Spring Boot)
+├── booking_system_inventory_hold_service/ # Java hold service (Spring Boot)
 │   └── src/main/java/        # Java source code
 │
 ├── docs/                      # 📚 All documentation
@@ -79,7 +79,7 @@ start.bat
 
 This will automatically:
 - ✅ Install all dependencies
-- ✅ Start the backend server on port 8080
+- ✅ Start the backend server on port 8001
 - ✅ Start the frontend dev server on port 5173
 - ✅ Open both in separate terminal windows
 
@@ -106,16 +106,16 @@ npm run dev
 Once started, access:
 
 - **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:8080
-- **API Documentation**: http://localhost:8080/docs
-- **MCP Endpoint**: http://localhost:8080/mcp
+- **Backend API**: http://localhost:8001
+- **API Documentation**: http://localhost:8001/docs
+- **MCP Endpoint**: http://localhost:8001/mcp
 
 ## 📚 Documentation
 
 ### Component Documentation
 - **Backend**: [booking_system_backend/README.md](booking_system_backend/README.md) - API endpoints, MCP tools, database schema
 - **Frontend**: [booking_system_frontend/README.md](booking_system_frontend/README.md) - Components, styling, build instructions
-- **Java Service**: [inventory_hold_service/README.md](inventory_hold_service/README.md) - Hold service API and architecture
+- **Java Service**: [booking_system_inventory_hold_service/README.md](booking_system_inventory_hold_service/README.md) - Hold service API and architecture
 
 ### Deployment Guides
 - **AWS**: [docs/AWS-DEPLOYMENT.md](docs/AWS-DEPLOYMENT.md) - Complete AWS ECS deployment guide
@@ -266,7 +266,7 @@ colors: {
 - Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
 
 ### Connection Issues
-- Verify backend is running on http://localhost:8080
+- Verify backend is running on http://localhost:8001
 - Check CORS settings in backend
 - Ensure `.env` file exists in frontend with correct API URL
 
