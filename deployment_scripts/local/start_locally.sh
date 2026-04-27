@@ -33,8 +33,12 @@ fi
 cleanup() {
     echo ""
     echo "🛑 Shutting down servers..."
-    kill $BACKEND_PID $FRONTEND_PID $JAVA_PID 2>/dev/null
-    rm -f booking_system_backend/backend.log inventory_hold_service/java.log
+    if [ -n "$JAVA_PID" ]; then
+        kill $BACKEND_PID $FRONTEND_PID $JAVA_PID 2>/dev/null
+    else
+        kill $BACKEND_PID $FRONTEND_PID 2>/dev/null
+    fi
+    rm -f booking_system_backend/backend.log booking_system_inventory_hold_service/java.log
     exit 0
 }
 
@@ -91,27 +95,35 @@ cd ..
 echo -e "${GREEN}✅ Backend started on http://localhost:8001${NC}"
 echo ""
 
-# Start Java Hold Service
-echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
-cd inventory_hold_service
-mvn -q spring-boot:run > java.log 2>&1 &
-JAVA_PID=$!
+# Start Java Hold Service (if it exists)
+JAVA_PID=""
+if [ -d "booking_system_inventory_hold_service" ] && [ -f "booking_system_inventory_hold_service/pom.xml" ]; then
+    echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
+    cd booking_system_inventory_hold_service
+    mvn -q spring-boot:run > java.log 2>&1 &
+    JAVA_PID=$!
 
-# Wait for Java service to start and verify
-sleep 8
-if ! curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
-    # Try the root path as fallback
-    if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
-        echo "❌ Java Hold Service failed to start. Check inventory_hold_service/java.log for errors:"
-        cat java.log
-        kill $BACKEND_PID $JAVA_PID 2>/dev/null
-        exit 1
+    # Wait for Java service to start and verify
+    sleep 8
+    if ! curl -s http://localhost:8080/actuator/health > /dev/null 2>&1; then
+        # Try the root path as fallback
+        if ! curl -s http://localhost:8080/ > /dev/null 2>&1; then
+            echo "⚠️  Java Hold Service failed to start. Check booking_system_inventory_hold_service/java.log for errors:"
+            cat java.log
+            echo "⚠️  Continuing without Java Hold Service..."
+            JAVA_PID=""
+        fi
     fi
-fi
 
-cd ..
-echo -e "${GREEN}✅ Java Hold Service started on http://localhost:8080${NC}"
-echo ""
+    cd ..
+    if [ -n "$JAVA_PID" ]; then
+        echo -e "${GREEN}✅ Java Hold Service started on http://localhost:8080${NC}"
+    fi
+    echo ""
+else
+    echo -e "${BLUE}ℹ️  Java Hold Service not found - skipping${NC}"
+    echo ""
+fi
 
 # Start Frontend
 echo -e "${BLUE}🎨 Starting Frontend Server...${NC}"
@@ -136,12 +148,18 @@ echo ""
 echo "   Backend:       http://localhost:8001"
 echo "   Frontend:      http://localhost:5173"
 echo "   API Docs:      http://localhost:8001/docs"
-echo "   Hold Service:  http://localhost:8080"
+if [ -n "$JAVA_PID" ]; then
+    echo "   Hold Service:  http://localhost:8080"
+fi
 echo ""
 echo "Press Ctrl+C to stop all servers"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Wait for all processes
-wait $BACKEND_PID $FRONTEND_PID $JAVA_PID
+if [ -n "$JAVA_PID" ]; then
+    wait $BACKEND_PID $FRONTEND_PID $JAVA_PID
+else
+    wait $BACKEND_PID $FRONTEND_PID
+fi
 
 # Made with Bob
