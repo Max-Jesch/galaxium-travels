@@ -1,4 +1,4 @@
-name: bob-review
+name: 🤖 Bob Review
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   review:
+    name: Bob reviews this PR
     # Skip draft PRs and bot-authored PRs to avoid loops
     if: >
       github.event.pull_request.draft == false &&
@@ -63,14 +64,23 @@ jobs:
 
       - name: Extract review from Bob's stdout
         run: |
-          awk '/^<<<BOB_REVIEW_BEGIN_8f3a2b1c>>>$/{flag=1; next} /^<<<BOB_REVIEW_END_8f3a2b1c>>>$/{flag=0} flag' bob_output.txt > review.md
-          if [ ! -s review.md ]; then
+          awk '/^<<<BOB_REVIEW_BEGIN_8f3a2b1c>>>$/{flag=1; next} /^<<<BOB_REVIEW_END_8f3a2b1c>>>$/{flag=0} flag' bob_output.txt > review_body.md
+          if [ ! -s review_body.md ]; then
             echo "ERROR: review markers not found in Bob's output"
             echo "--- Bob output ---"
             cat bob_output.txt
             exit 1
           fi
-          echo "--- Extracted review ---"
+          {
+            echo "## 🤖 Bob's Review"
+            echo ""
+            echo "*Posted by [Bob Shell](https://bob.ibm.com), IBM's CLI agent — running headless on GitHub Actions.*"
+            echo ""
+            echo "---"
+            echo ""
+            cat review_body.md
+          } > review.md
+          echo "--- Final review ---"
           cat review.md
 
       - name: Post review comment
