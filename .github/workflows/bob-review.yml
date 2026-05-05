@@ -42,33 +42,36 @@ jobs:
           bob --accept-license --auth-method api-key -p "$(cat <<'EOF'
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
           Read AGENTS.md first to understand this repo's patterns and constraints.
-          The PR diff is in the file pr.diff. Read it using read_file tool with file_path="pr.diff".
+          The PR diff is in the file pr.diff. Read it using the read_file tool with file_path="pr.diff".
 
-          Write a concise code review using write_to_file tool with EXACTLY file_path="review.md" (do NOT use absolute paths):
+          Then PRINT your code review to stdout — do NOT call write_to_file or any file-writing tool. Bracket the review with these two marker lines exactly, each on its own line:
+
+          <<<BOB_REVIEW_BEGIN_8f3a2b1c>>>
+          ...your review markdown...
+          <<<BOB_REVIEW_END_8f3a2b1c>>>
+
+          The review must contain:
           - A 1-2 sentence summary at the top.
           - A "Findings" section with the issues you'd raise, each with a file:line reference and a short suggestion. Group by severity (blocker / nit / question).
           - If the diff looks fine, say so plainly. Do not invent issues.
           - Be specific. Do not restate what the diff already shows.
           - Do not approve or block the PR — you are leaving a comment, not a verdict.
 
-          Do not modify any source files. Do not run the test suite. Only write review.md in the current working directory.
+          Do not modify any source files. Do not run the test suite. Do not write any files.
           EOF
-          )"
+          )" 2>&1 | tee bob_output.txt
 
-      - name: Locate review.md
+      - name: Extract review from Bob's stdout
         run: |
-          if [ -f review.md ]; then
-            echo "review.md already in workspace"
-            exit 0
-          fi
-          REVIEW_PATH=$(find / -maxdepth 8 -name review.md -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -1)
-          if [ -z "$REVIEW_PATH" ]; then
-            echo "ERROR: review.md not found anywhere on filesystem"
-            ls -la
+          awk '/^<<<BOB_REVIEW_BEGIN_8f3a2b1c>>>$/{flag=1; next} /^<<<BOB_REVIEW_END_8f3a2b1c>>>$/{flag=0} flag' bob_output.txt > review.md
+          if [ ! -s review.md ]; then
+            echo "ERROR: review markers not found in Bob's output"
+            echo "--- Bob output ---"
+            cat bob_output.txt
             exit 1
           fi
-          echo "Found review.md at: $REVIEW_PATH"
-          cp "$REVIEW_PATH" review.md
+          echo "--- Extracted review ---"
+          cat review.md
 
       - name: Post review comment
         env:
