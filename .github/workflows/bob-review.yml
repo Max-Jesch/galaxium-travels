@@ -39,7 +39,7 @@ jobs:
         env:
           BOBSHELL_API_KEY: ${{ secrets.BOBSHELL_API_KEY }}
         run: |
-          bob --auth-method api-key -p "$(cat <<'EOF'
+          bob --accept-license --auth-method api-key -p "$(cat <<'EOF'
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
           Read AGENTS.md first to understand this repo's patterns and constraints.
           The PR diff is at /tmp/pr.diff. Read it.
