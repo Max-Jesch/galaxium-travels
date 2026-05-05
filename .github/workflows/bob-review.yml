@@ -55,6 +55,14 @@ jobs:
           EOF
           )"
 
+      - name: Debug - List files
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          echo "Looking for review.md:"
+          find . -name "review.md" -type f 2>/dev/null || echo "review.md not found"
+
       - name: Post review comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
