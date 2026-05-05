@@ -55,13 +55,17 @@ jobs:
           EOF
           )"
 
-      - name: Debug - List files
+      - name: Copy review from Bob's temp location
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Files in current directory:"
-          ls -la
-          echo "Looking for review.md:"
-          find . -name "review.md" -type f 2>/dev/null || echo "review.md not found"
+          if [ -f /tmp/review.md ]; then
+            cp /tmp/review.md review.md
+            echo "Copied review.md from /tmp to workspace"
+          elif [ -f review.md ]; then
+            echo "review.md already in workspace"
+          else
+            echo "ERROR: review.md not found in /tmp or workspace"
+            exit 1
+          fi
 
       - name: Post review comment
         env:
