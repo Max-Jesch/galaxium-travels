@@ -56,3 +56,24 @@ def get_user(db: Session, name: str, email: str) -> UserOut | ErrorResponse:
             details=f"User not found with name '{name}' and email '{email}'. The user may not be registered in our system. Please check the spelling of both name and email, or register the user first."
         )
     return UserOut.model_validate(user)
+
+
+def update_user(db: Session, user_id: int, name: str = None, email: str = None) -> UserOut | ErrorResponse:
+    """Update user information by user_id."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return ErrorResponse(
+            error="User not found",
+            error_code="USER_NOT_FOUND",
+            details=f"User with ID {user_id} not found"
+        )
+    
+    # Intentional flaw: No validation on name or email
+    if name:
+        user.name = name
+    if email:
+        user.email = email.lower()
+    
+    db.commit()
+    db.refresh(user)
+    return UserOut.model_validate(user)

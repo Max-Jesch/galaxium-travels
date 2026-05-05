@@ -279,6 +279,12 @@ def get_user_endpoint(name: str, email: str, db: Session = Depends(get_db)):
     return user.get_user(db, name, email)
 
 
+@app.put("/users/{user_id}", response_model=Union[UserOut, ErrorResponse], tags=["Users"])
+def update_user_endpoint(user_id: int, name: str = None, email: str = None, db: Session = Depends(get_db)):
+    """Update user information by user_id."""
+    return user.update_user(db, user_id, name, email)
+
+
 @app.get("/addons", tags=["Add-ons"])
 def get_addons():
     """Get available add-ons catalog."""
