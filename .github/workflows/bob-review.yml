@@ -42,16 +42,16 @@ jobs:
           bob --accept-license --auth-method api-key -p "$(cat <<'EOF'
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
           Read AGENTS.md first to understand this repo's patterns and constraints.
-          The PR diff is at pr.diff in the workspace root. Read it.
+          The PR diff is in the file pr.diff. Read it using read_file tool.
 
-          Write a concise code review to review.md in the workspace root as GitHub-flavored markdown:
+          Write a concise code review using write_to_file tool with file_path="review.md" (relative path in current directory):
           - A 1-2 sentence summary at the top.
           - A "Findings" section with the issues you'd raise, each with a file:line reference and a short suggestion. Group by severity (blocker / nit / question).
           - If the diff looks fine, say so plainly. Do not invent issues.
           - Be specific. Do not restate what the diff already shows.
           - Do not approve or block the PR — you are leaving a comment, not a verdict.
 
-          Do not modify any source files. Do not run the test suite. Only write /tmp/review.md.
+          Do not modify any source files. Do not run the test suite. Only write review.md in the current working directory.
           EOF
           )"
 
