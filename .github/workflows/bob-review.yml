@@ -55,17 +55,20 @@ jobs:
           EOF
           )"
 
-      - name: Copy review from Bob's temp location
+      - name: Locate review.md
         run: |
-          if [ -f /tmp/review.md ]; then
-            cp /tmp/review.md review.md
-            echo "Copied review.md from /tmp to workspace"
-          elif [ -f review.md ]; then
+          if [ -f review.md ]; then
             echo "review.md already in workspace"
-          else
-            echo "ERROR: review.md not found in /tmp or workspace"
+            exit 0
+          fi
+          REVIEW_PATH=$(find / -maxdepth 8 -name review.md -not -path "/proc/*" -not -path "/sys/*" 2>/dev/null | head -1)
+          if [ -z "$REVIEW_PATH" ]; then
+            echo "ERROR: review.md not found anywhere on filesystem"
+            ls -la
             exit 1
           fi
+          echo "Found review.md at: $REVIEW_PATH"
+          cp "$REVIEW_PATH" review.md
 
       - name: Post review comment
         env:
