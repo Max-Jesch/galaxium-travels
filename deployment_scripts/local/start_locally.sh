@@ -92,6 +92,30 @@ echo ""
 # Start Java Hold Service (if it exists)
 JAVA_PID=""
 HOLD_SERVICE_DIR="booking_system_inventory_hold_service"
+
+# Detect a Java 17 or 21 JDK for Maven (Lombok doesn't support Java 22+)
+# Prefer sdkman candidates in order: 17, 21, then fall back to system Java
+JAVA_HOME_FOR_MAVEN=""
+if [ -d "$HOME/.sdkman/candidates/java" ]; then
+    for preferred in 17 21; do
+        candidate=$(ls "$HOME/.sdkman/candidates/java/" 2>/dev/null | grep "^${preferred}" | head -1)
+        if [ -n "$candidate" ]; then
+            JAVA_HOME_FOR_MAVEN="$HOME/.sdkman/candidates/java/$candidate"
+            break
+        fi
+    done
+fi
+# Fallback: check /usr/libexec/java_home on macOS for Java 17 or 21
+if [ -z "$JAVA_HOME_FOR_MAVEN" ] && command -v /usr/libexec/java_home &> /dev/null; then
+    for preferred in 17 21; do
+        candidate=$(/usr/libexec/java_home -v "$preferred" 2>/dev/null)
+        if [ -n "$candidate" ]; then
+            JAVA_HOME_FOR_MAVEN="$candidate"
+            break
+        fi
+    done
+fi
+
 if [ -d "$HOLD_SERVICE_DIR" ]; then
     HOLD_SERVICE_CMD=""
 
@@ -120,8 +144,11 @@ if [ -d "$HOLD_SERVICE_DIR" ]; then
         echo ""
     else
         echo -e "${BLUE}☕ Starting Java Hold Service...${NC}"
+        if [ -n "$JAVA_HOME_FOR_MAVEN" ]; then
+            echo "   Using Java from: $JAVA_HOME_FOR_MAVEN"
+        fi
         cd "$HOLD_SERVICE_DIR"
-        PYTHON_BACKEND_URL=http://localhost:8001 $HOLD_SERVICE_CMD > java.log 2>&1 &
+        JAVA_HOME="${JAVA_HOME_FOR_MAVEN:-$JAVA_HOME}" PYTHON_BACKEND_URL=http://localhost:8001 $HOLD_SERVICE_CMD > java.log 2>&1 &
         JAVA_PID=$!
 
         # Wait for Java service to start and verify
