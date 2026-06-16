@@ -378,13 +378,49 @@ Location: `.github/workflows/bob-review.yml`
 
 ## Post-Demo Cleanup
 
-After the demo, clean up the fork:
+After the demo, you have two options for cleanup:
+
+### Option 1: Automated Reset (Recommended)
+
+Use the provided reset script to automatically clean up everything:
 
 ```bash
+./reset.sh
+```
+
+This will:
+- Delete all demo branches (local and remote)
+- Reset to main branch and pull latest changes
+- Clean the database (will be recreated with fresh seed data)
+- Remove build artifacts
+- Provide interactive confirmations for safety
+
+For non-interactive mode (use with caution):
+```bash
+./reset.sh --force
+```
+
+### Option 2: Manual Cleanup
+
+If you prefer manual cleanup:
+
+```bash
+# Clean database (optional)
+rm -f booking_system_backend/booking.db
+
 # Delete safety-net branches
 git push origin --delete demo/missing-validation
 git push origin --delete demo/off-by-one
 git push origin --delete demo/missing-tests
+
+# Delete local branches
+git branch -D demo/missing-validation
+git branch -D demo/off-by-one
+git branch -D demo/missing-tests
+
+# Switch back to main
+git checkout main
+git pull origin main
 
 # Close any open PRs via GitHub UI
 
