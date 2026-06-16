@@ -43,7 +43,7 @@ A demo interplanetary flight-booking app that mimics a real enterprise system. I
 - **Start all locally:** `./start.sh` (wraps `scripts/local/start_locally.sh`)
 - **Docker Compose (backend + frontend):** `docker compose up`
 - **Docker Compose (+ Java hold service):** `docker compose --profile hold-service up`
-- **E2E tests:** `cd e2e && ./run.sh` (builds full stack in Docker, waits for health, runs pytest)
+- **E2E tests:** `./test.sh` (builds full stack in Docker, waits for health, runs pytest)
   - `E2E_BASE_URL=http://host:port` — skip compose, run against existing stack
   - `E2E_KEEP_STACK=1` — leave stack up after tests (for debugging)
   - `E2E_RUN_SLOW=1` — include the ~90 s auto-expiry test
@@ -109,7 +109,7 @@ scripts/
 
 - Branch naming: no enforced convention observed; recent branches use `restore/`, `feature/` prefixes.
 - Before a PR: run `cd booking_system_backend && pytest` (all must pass).
-- E2E tests require Docker; run with `cd e2e && ./run.sh` before merging hold-service changes.
+- E2E tests require Docker; run with `./test.sh` before merging hold-service changes.
 ## Notes for the agent
 
 - `booking_system_inventory_hold_service/target/` is Maven output — never edit files inside it.
