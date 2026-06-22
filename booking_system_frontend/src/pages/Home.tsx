@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/common';
 import { Rocket, Globe, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ALL_DESTINATIONS } from '../data/destinations';
 
 export const Home = () => {
   const features = [
@@ -105,6 +106,40 @@ export const Home = () => {
                 {feature.title}
               </h3>
               <p className="text-star-white/70">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Explore Destinations Section */}
+      <section>
+        <motion.h2
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-3xl md:text-4xl font-bold text-center mb-12 text-star-white"
+        >
+          Explore Our Destinations
+        </motion.h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {ALL_DESTINATIONS.map((dest, index) => (
+            <motion.div
+              key={dest.slug}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.07 }}
+            >
+              <Link to={`/destinations/${dest.slug}`} className="block h-full">
+                <div className={`glass-card p-5 h-full hover:bg-white/10 transition-all duration-300 border ${dest.borderAccent}`}>
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-3 ${dest.bgAccent} ${dest.accentColor} border ${dest.borderAccent}`}>
+                    Destination
+                  </span>
+                  <h3 className="text-lg font-bold text-star-white mb-1">{dest.name}</h3>
+                  <p className="text-star-white/60 text-sm leading-snug">{dest.tagline}</p>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
