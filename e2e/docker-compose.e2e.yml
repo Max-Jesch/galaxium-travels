@@ -4,16 +4,20 @@
 #
 # Deliberately leaner than the prod docker-compose.yml: no Postgres. The backend
 # defaults to SQLite when DATABASE_URL is unset, which is plenty for the tests and
-# keeps the whole stack to two already-built images — important on the small
-# Rancher Desktop VM disk, where pulling Postgres + amd64 emulation runs out of
-# space. Swap SQLite for Postgres here if you ever want to test that path too.
+# keeps the whole stack to two locally-built images. Swap SQLite for Postgres here
+# if you ever want to test that path too.
+#
+# Unlike the prod compose, this stack builds *native* images (no platform pin) so
+# it doesn't pay the QEMU amd64 emulation tax on Apple Silicon — the slow part was
+# emulating both the Maven build and Spring Boot startup. The only amd64-only base
+# image was the Java alpine JRE, so we override it (RUNTIME_IMAGE below) with a
+# multi-arch JRE for this build only; prod's Dockerfile default is untouched.
 #
 # Brought up/down automatically by conftest.py. Run manually with:
 #   docker compose -p galaxium_e2e -f e2e/docker-compose.e2e.yml up -d --build
 services:
   backend:
     build: ../booking_system_backend
-    platform: linux/amd64
     ports:
       - "18001:8080"
     environment:
@@ -23,10 +27,12 @@ services:
       SEED_DEMO_DATA: "true"
 
   java-service:
-    build: ../booking_system_inventory_hold_service
-    # The Java image's alpine JRE runtime stage is amd64-only, so (like the base
-    # docker-compose.yml) we run this stack under amd64 emulation on Apple Silicon.
-    platform: linux/amd64
+    build:
+      context: ../booking_system_inventory_hold_service
+      args:
+        # Multi-arch JRE (glibc) so this builds/runs native instead of emulated.
+        # Prod keeps the alpine default baked into the Dockerfile.
+        RUNTIME_IMAGE: eclipse-temurin:17-jre
     ports:
       - "18082:8080"
     environment:

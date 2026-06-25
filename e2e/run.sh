@@ -9,11 +9,10 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-if [ ! -d .venv ]; then
+if [ ! -d .venv ] || ! .venv/bin/python3 -c "" 2>/dev/null; then
+  rm -rf .venv
   python3 -m venv .venv
 fi
-# shellcheck disable=SC1091
-source .venv/bin/activate
-pip install -q -r requirements.txt
+.venv/bin/pip install -q -r requirements.txt
 
-exec pytest "$@"
+exec .venv/bin/pytest "$@"
