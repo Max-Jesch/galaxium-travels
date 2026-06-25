@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional, Literal
 
 # Seat class type definition
@@ -44,8 +44,7 @@ class FlightOut(BaseModel):
     business_price: int
     galaxium_price: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BookingRequest(BaseModel):
@@ -64,8 +63,7 @@ class BookingOut(BaseModel):
     seat_class: str
     price_paid: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRegistration(BaseModel):
@@ -78,8 +76,7 @@ class UserOut(BaseModel):
     name: str
     email: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ErrorResponse(BaseModel):
