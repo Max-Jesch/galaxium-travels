@@ -10,51 +10,40 @@ catch bugs in that round trip — these do.
 
 ## Run it
 
-### Native — recommended here (`run-native.sh`)
-
 ```bash
-./run-native.sh                 # start backend + java jar, run tests, tear down
-E2E_RUN_SLOW=1 ./run-native.sh  # also runs the ~90s hold auto-expiry test
+./run-native.sh                 # full run (also: ./test.sh from the repo root)
+E2E_RUN_SLOW=1 ./run-native.sh  # also run the ~90s hold auto-expiry test
+./run-native.sh -k confirm      # pass extra args to pytest
 ```
 
-Runs the Python backend (throwaway SQLite) and the prebuilt Java jar directly —
-no Docker, no VM, no amd64 emulation. Fast (~65s) and reliable. Nothing touches
-your dev `booking.db` / `holds.db`.
+Starts the Python backend and Java hold service directly using throwaway SQLite
+databases — no Docker required. The Java jar is built automatically on first run
+if it isn't already present.
 
 Requirements:
-- `booking_system_backend/.venv` exists with deps installed.
-- `booking_system_inventory_hold_service/target/inventory-hold-service-1.0.0.jar`
-  exists. **Build it with Java 17** — the pinned Lombok doesn't compile under
-  newer JDKs (this machine has Java 25). Either `cd` into the service and
-  `mvn package -DskipTests` with a JDK 17, or extract it from the built image:
-  ```bash
-  cid=$(docker create galaxium_e2e-java-service:latest)
-  docker cp $cid:/app/app.jar booking_system_inventory_hold_service/target/inventory-hold-service-1.0.0.jar
-  docker rm $cid
-  ```
+- `booking_system_backend/.venv` exists with deps installed (`pip install -r requirements.txt`)
+- `java` and `mvn` on `PATH`, with **Java 17 or 21** active — the pinned Lombok version does not compile under Java 22+
 
-### Docker (`run.sh`)
+### Against an already-running stack
+
+If you already have both services up, skip the managed startup and point the
+tests at your running backend:
 
 ```bash
-./run.sh                 # builds + starts the full stack, runs tests, tears it down
-E2E_RUN_SLOW=1 ./run.sh
+E2E_BASE_URL=http://localhost:8001 ./run-native.sh
 ```
 
-Brings up the stack defined in `docker-compose.e2e.yml` (backend + java, SQLite,
-no Postgres). **Heads up:** on this machine the Rancher Desktop VM disk is only
-~2.9 GB. The images *build*, but launching the containers (which unpacks image
-layers into a second on-disk copy) runs out of space. Until the VM disk is
-enlarged (Rancher Desktop → Troubleshooting → Factory Reset, or a disk-size
-bump), use `run-native.sh`. The Docker path is kept for CI / bigger machines.
+### Docker (CI / other environments)
 
-### Against an already-running stack (quick smoke)
-
-If you already have a backend up, skip the managed stack and point the tests at
-it (the hold tests need the Java service reachable via that backend's
-`JAVA_SERVICE_URL`):
+`docker-compose.e2e.yml` defines a self-contained stack (backend + Java service,
+SQLite, no Postgres) that `conftest.py` brings up automatically when
+`E2E_BASE_URL` is not set. Useful in CI where Docker is available but a local
+JDK is not:
 
 ```bash
-E2E_BASE_URL=http://localhost:8001 ./run.sh
+cd e2e && python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt
+E2E_BASE_URL=   # unset — conftest will manage compose
+.venv/bin/pytest
 ```
 
 ## What it covers
@@ -76,11 +65,9 @@ E2E_BASE_URL=http://localhost:8001 ./run.sh
 
 | Env var | Effect |
 |---|---|
-| `E2E_BASE_URL` | Run against an existing backend instead of managing compose |
-| `E2E_KEEP_STACK=1` | Leave the compose stack up after the run (debugging) |
-| `E2E_RUN_SLOW=1` | Include the auto-expiry test |
+| `E2E_BASE_URL` | Run against an existing backend instead of starting services |
+| `E2E_KEEP_STACK=1` | Leave the compose stack up after the run (Docker path only) |
+| `E2E_RUN_SLOW=1` | Include the auto-expiry test (~90s) |
 
-The managed stack runs on ports **18001** (backend) and **18082** (Java) so it
-won't collide with a dev stack on 8001/8082. Config lives in
-`docker-compose.e2e.yml`, where the hold duration is shortened to 1 minute so
-expiry is testable.
+The Docker-managed stack runs on ports **18001** (backend) and **18082** (Java)
+so it won't collide with a dev stack on 8001/8080.

@@ -1,15 +1,17 @@
 """
 End-to-end test harness for the full Galaxium stack.
 
-By default this brings up a self-contained docker-compose stack (Postgres +
-Python backend + Java hold service), waits for it to be healthy, runs the
-tests against the *public* REST API the frontend uses, then tears it down.
+Normally invoked via run-native.sh (or ./test.sh from the repo root), which
+starts the Python backend and Java hold service directly and sets E2E_BASE_URL.
+The stack fixture then skips compose and runs against those processes.
+
+When E2E_BASE_URL is not set (e.g. in CI), the stack fixture brings up the
+docker-compose.e2e.yml stack (backend + Java service, SQLite), waits for both
+to be healthy, runs the tests, then tears it down.
 
 Useful environment variables:
-  E2E_BASE_URL=http://host:port   Run against an already-running backend instead
-                                  of managing compose (great for a quick smoke).
-  E2E_KEEP_STACK=1                Leave the compose stack up after the run (for
-                                  debugging). Default tears it down with volumes.
+  E2E_BASE_URL=http://host:port   Run against an already-running backend.
+  E2E_KEEP_STACK=1                Leave the compose stack up after the run.
   E2E_RUN_SLOW=1                  Include the ~90s auto-expiry test.
 """
 

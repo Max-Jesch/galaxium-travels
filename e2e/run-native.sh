@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-# Run the e2e suite WITHOUT Docker.
+# Run the e2e suite natively (no Docker).
 #
-# Starts the Python backend (throwaway SQLite) and the Java hold service from the
-# prebuilt jar, waits for both to be healthy, runs the suite against them, and
-# tears everything down on exit. Nothing touches your dev booking.db / holds.db.
+# Starts the Python backend and Java hold service directly, waits for both to
+# be healthy, runs the full suite, then tears everything down. Uses throwaway
+# SQLite databases in a temp dir — nothing touches your dev booking.db / holds.db.
 #
-# Use this when the Docker path is impractical (e.g. the Rancher Desktop VM disk
-# is too small to run the container stack). It's also faster — no amd64 emulation.
+# The Java jar is built automatically on first run if not already present.
 #
-#   ./run-native.sh                 # full run
+#   ./run-native.sh                 # full run (also callable as ./test.sh from root)
 #   E2E_RUN_SLOW=1 ./run-native.sh  # also run the ~90s auto-expiry test
 #   ./run-native.sh -k confirm      # extra args pass straight through to pytest
 set -euo pipefail
@@ -56,12 +55,9 @@ command -v java >/dev/null || fail "java not found on PATH"
 [ -x "$BACKEND_DIR/.venv/bin/python" ] || fail "backend venv missing ($BACKEND_DIR/.venv) — create it and pip install -r requirements.txt"
 
 if [ ! -f "$JAR" ]; then
-  fail "hold-service jar not found at $JAR.
-       Build it with Java 17 (the pinned Lombok doesn't compile under newer JDKs):
-         cd $JAVA_DIR && mvn package -DskipTests
-       or extract it from the built image:
-         cid=\$(docker create galaxium_e2e-java-service:latest) && \\
-         docker cp \$cid:/app/app.jar $JAR && docker rm \$cid"
+  echo "[e2e] jar not found — building hold service (this takes ~1 min on first run)..."
+  command -v mvn >/dev/null || fail "mvn not found on PATH — install Maven to auto-build the jar"
+  ( cd "$JAVA_DIR" && mvn package -DskipTests -q ) || fail "Maven build failed — check Java version (requires 17 or 21; Lombok doesn't compile under 22+)"
 fi
 
 # --- start backend (throwaway SQLite) ------------------------------------
