@@ -2,8 +2,25 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, func, cast, Integer
 from models import Flight
 from schemas import FlightOut, ErrorResponse
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional
+
+
+def _flight_to_out(f: Flight) -> FlightOut:
+    return FlightOut(
+        flight_id=f.flight_id,
+        origin=f.origin,
+        destination=f.destination,
+        departure_time=f.departure_time,
+        arrival_time=f.arrival_time,
+        base_price=f.base_price,
+        economy_seats_available=f.economy_seats_available,
+        business_seats_available=f.business_seats_available,
+        galaxium_seats_available=f.galaxium_seats_available,
+        economy_price=f.base_price,
+        business_price=int(f.base_price * 2.5),
+        galaxium_price=f.base_price * 5,
+    )
 
 
 # Popular route categories (hardcoded for demo)
@@ -78,26 +95,12 @@ def list_flights(
     if destination:
         query = query.filter(Flight.destination.ilike(f'%{destination}%'))
     
-    # Date range filter (supports both ISO format and YYYY-MM-DD)
+    # Date range filter — normalise to "YYYY-MM-DD HH:MM" for consistent SQLite comparison
     if departure_date_from:
-        try:
-            # Try ISO format first
-            date_from = datetime.fromisoformat(departure_date_from.replace('Z', '+00:00'))
-            query = query.filter(Flight.departure_time >= date_from.isoformat())
-        except ValueError:
-            # Fall back to simple string comparison for YYYY-MM-DD format
-            query = query.filter(Flight.departure_time >= departure_date_from)
-    
+        query = query.filter(Flight.departure_time >= f'{departure_date_from[:10]} 00:00')
+
     if departure_date_to:
-        try:
-            # Try ISO format first
-            date_to = datetime.fromisoformat(departure_date_to.replace('Z', '+00:00'))
-            # Add one day to include the entire end date
-            date_to = date_to + timedelta(days=1)
-            query = query.filter(Flight.departure_time < date_to.isoformat())
-        except ValueError:
-            # Fall back to simple string comparison for YYYY-MM-DD format
-            query = query.filter(Flight.departure_time <= f'{departure_date_to} 23:59')
+        query = query.filter(Flight.departure_time <= f'{departure_date_to[:10]} 23:59')
     
     # Price range filter
     if min_price is not None:
@@ -170,12 +173,7 @@ def list_flights(
     # Phase 3: Route category filter
     if route_category and route_category in ROUTE_CATEGORIES:
         destinations = ROUTE_CATEGORIES[route_category]
-        query = query.filter(
-            or_(
-                Flight.origin.in_(destinations),
-                Flight.destination.in_(destinations)
-            )
-        )
+        query = query.filter(Flight.destination.in_(destinations))
     
     # Get all flights before sorting (needed for duration calculation)
     flights = query.all()
@@ -185,44 +183,19 @@ def list_flights(
     for f in flights:
         # Calculate duration in hours
         try:
-            # Try both ISO format and simple format
-            dep_str = f.departure_time.replace('Z', '+00:00')
-            arr_str = f.arrival_time.replace('Z', '+00:00')
-            
-            try:
-                dep = datetime.fromisoformat(dep_str)
-                arr = datetime.fromisoformat(arr_str)
-            except ValueError:
-                # Fall back to simple format
-                dep = datetime.strptime(f.departure_time, "%Y-%m-%d %H:%M")
-                arr = datetime.strptime(f.arrival_time, "%Y-%m-%d %H:%M")
-            
+            dep = datetime.strptime(f.departure_time, "%Y-%m-%d %H:%M")
+            arr = datetime.strptime(f.arrival_time, "%Y-%m-%d %H:%M")
             duration_hours = (arr - dep).total_seconds() / 3600
         except (ValueError, AttributeError):
             duration_hours = 0
-        
+
         # Phase 2: Duration filter
         if min_duration is not None and duration_hours < min_duration:
             continue
         if max_duration is not None and duration_hours > max_duration:
             continue
-        
-        # Compute prices for all seat classes
-        flight_dict = {
-            'flight_id': f.flight_id,
-            'origin': f.origin,
-            'destination': f.destination,
-            'departure_time': f.departure_time,
-            'arrival_time': f.arrival_time,
-            'base_price': f.base_price,
-            'economy_seats_available': f.economy_seats_available,
-            'business_seats_available': f.business_seats_available,
-            'galaxium_seats_available': f.galaxium_seats_available,
-            'economy_price': f.base_price,  # 1x
-            'business_price': int(f.base_price * 2.5),  # 2.5x
-            'galaxium_price': f.base_price * 5  # 5x
-        }
-        result.append((FlightOut(**flight_dict), duration_hours, f))
+
+        result.append((_flight_to_out(f), duration_hours, f))
     
     # Apply sorting
     # Prefer feature branch style (sort_by/sort_order) over main branch style (sort/order)

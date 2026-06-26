@@ -16,6 +16,36 @@ A demo interplanetary flight-booking app that mimics a real enterprise system. I
 - **Python proxy swallows Java 404s** — proxy endpoints in `server.py` catch `httpx.HTTPError` and return `{"error": "..."}` with HTTP 200. Callers must check the response body, not just the status code (see [`test_holds.py` line 82](e2e/test_holds.py:82)).
 - **`holds.db` and `booking.db` are committed artefacts** — do not delete; they seed local dev. They are regenerated on startup via `spring.jpa.hibernate.ddl-auto=update` and `SEED_DEMO_DATA=true`.
 
+## Prerequisites
+
+Docker is required for the full stack and e2e tests. On macOS, [Colima](https://github.com/abiosoft/colima) is the recommended Docker runtime:
+
+```bash
+# docker-buildx is NOT optional: without it, "docker compose --build" falls back
+# to the legacy builder, which on macOS triggers a Keychain prompt and fails with
+# "error getting credentials ... (-128)". It also forces slow amd64 emulation.
+brew install colima docker docker-compose docker-buildx
+colima start
+```
+
+Homebrew installs the compose and buildx plugins under `/opt/homebrew/lib/docker/cli-plugins`, but the Docker CLI doesn't look there by default. Point it there once (per Homebrew's own caveats) so both `docker compose` and `docker buildx` work:
+
+```jsonc
+// ~/.docker/config.json
+{
+  "cliPluginsExtraDirs": ["/opt/homebrew/lib/docker/cli-plugins"]
+}
+```
+
+Verify before running any compose or e2e commands:
+
+```bash
+docker ps           # should return an empty table, not an error
+docker buildx version   # should print a version, not "unknown command"
+```
+
+If `docker ps` errors with "cannot connect to the Docker daemon", `colima start` didn't activate its context — run `docker context use colima` (or `export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"`).
+
 ## Commands
 
 ### Backend (Python / FastAPI)
@@ -44,7 +74,8 @@ A demo interplanetary flight-booking app that mimics a real enterprise system. I
 - **Docker Compose (backend + frontend):** `docker compose up`
 - **Docker Compose (+ Java hold service):** `docker compose --profile hold-service up`
 - **E2E tests:** `./test.sh` (builds full stack in Docker, waits for health, runs pytest)
-  - `E2E_BASE_URL=http://host:port` — skip compose, run against existing stack
+  - Requires Docker — start Colima first if not already running (`colima start`)
+  - `E2E_BASE_URL=http://host:port` — skip compose, run against an already-running stack (fast iteration)
   - `E2E_KEEP_STACK=1` — leave stack up after tests (for debugging)
   - `E2E_RUN_SLOW=1` — include the ~90 s auto-expiry test
 

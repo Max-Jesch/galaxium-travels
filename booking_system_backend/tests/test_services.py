@@ -22,8 +22,8 @@ class TestFlightService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
             base_price=1000,
             economy_seats_available=5,
             business_seats_available=3,
@@ -40,12 +40,12 @@ class TestFlightService:
         """Test sorting flights by price ascending."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=2000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -59,12 +59,12 @@ class TestFlightService:
         """Test sorting flights by price descending."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=2000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -78,12 +78,12 @@ class TestFlightService:
         """Test filtering flights by date range."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-15T09:00:00Z", arrival_time="2099-01-15T17:00:00Z",
+            departure_time="2099-01-15 09:00", arrival_time="2099-01-15 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -96,17 +96,17 @@ class TestFlightService:
         """Test filtering flights by price range."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=500, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=1500, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Jupiter",
-            departure_time="2099-01-03T09:00:00Z", arrival_time="2099-01-03T17:00:00Z",
+            departure_time="2099-01-03 09:00", arrival_time="2099-01-03 17:00",
             base_price=2500, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -119,12 +119,12 @@ class TestFlightService:
         """Test filtering flights by seat class availability."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=0, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=0, galaxium_seats_available=0
         ))
         db_session.commit()
@@ -137,12 +137,12 @@ class TestFlightService:
         """Test filtering flights by time of day."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T08:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 08:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-01T14:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 14:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -155,12 +155,12 @@ class TestFlightService:
         """Test filtering flights by duration."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T13:00:00Z",  # 4 hours
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 13:00",  # 4 hours
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Jupiter",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T21:00:00Z",  # 12 hours
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 21:00",  # 12 hours
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -173,12 +173,12 @@ class TestFlightService:
         """Test filtering flights by minimum seats available."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=1, business_seats_available=1, galaxium_seats_available=0
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=2
         ))
         db_session.commit()
@@ -191,12 +191,12 @@ class TestFlightService:
         """Test filtering flights by route category."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Jupiter",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -209,12 +209,12 @@ class TestFlightService:
         """Test combining multiple filters."""
         db_session.add(Flight(
             origin="Earth", destination="Mars",
-            departure_time="2099-01-01T09:00:00Z", arrival_time="2099-01-01T17:00:00Z",
+            departure_time="2099-01-01 09:00", arrival_time="2099-01-01 17:00",
             base_price=1000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.add(Flight(
             origin="Earth", destination="Venus",
-            departure_time="2099-01-02T09:00:00Z", arrival_time="2099-01-02T17:00:00Z",
+            departure_time="2099-01-02 09:00", arrival_time="2099-01-02 17:00",
             base_price=2000, economy_seats_available=5, business_seats_available=3, galaxium_seats_available=1
         ))
         db_session.commit()
@@ -274,10 +274,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=5
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=5,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
 
@@ -291,7 +293,7 @@ class TestBookingService:
 
         # Verify seat was decremented
         db_session.refresh(flight_obj)
-        assert flight_obj.seats_available == 4
+        assert flight_obj.economy_seats_available == 4
 
     def test_book_flight_not_found(self, db_session):
         """Test booking non-existent flight."""
@@ -309,10 +311,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=0
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=0,
+            business_seats_available=0,
+            galaxium_seats_available=0
         ))
         db_session.commit()
 
@@ -328,10 +332,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=5
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=5,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
         flight_obj = db_session.query(Flight).first()
@@ -346,10 +352,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=5
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=5,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
 
@@ -366,10 +374,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=4
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=4,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
 
@@ -380,7 +390,9 @@ class TestBookingService:
             user_id=user_obj.user_id,
             flight_id=flight_obj.flight_id,
             status="booked",
-            booking_time="2099-01-01T10:00:00Z"
+            booking_time="2099-01-01 10:00",
+            seat_class="economy",
+            price_paid=1000000
         ))
         db_session.commit()
 
@@ -391,7 +403,7 @@ class TestBookingService:
 
         # Verify seat was restored
         db_session.refresh(flight_obj)
-        assert flight_obj.seats_available == 5
+        assert flight_obj.economy_seats_available == 5
 
     def test_cancel_booking_not_found(self, db_session):
         """Test cancelling non-existent booking."""
@@ -405,10 +417,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=5
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=5,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
 
@@ -419,7 +433,9 @@ class TestBookingService:
             user_id=user_obj.user_id,
             flight_id=flight_obj.flight_id,
             status="cancelled",
-            booking_time="2099-01-01T10:00:00Z"
+            booking_time="2099-01-01 10:00",
+            seat_class="economy",
+            price_paid=1000000
         ))
         db_session.commit()
 
@@ -435,10 +451,12 @@ class TestBookingService:
         db_session.add(Flight(
             origin="Earth",
             destination="Mars",
-            departure_time="2099-01-01T09:00:00Z",
-            arrival_time="2099-01-01T17:00:00Z",
-            price=1000000,
-            seats_available=5
+            departure_time="2099-01-01 09:00",
+            arrival_time="2099-01-01 17:00",
+            base_price=1000000,
+            economy_seats_available=5,
+            business_seats_available=3,
+            galaxium_seats_available=1
         ))
         db_session.commit()
 
@@ -449,7 +467,9 @@ class TestBookingService:
             user_id=user_obj.user_id,
             flight_id=flight_obj.flight_id,
             status="booked",
-            booking_time="2099-01-01T10:00:00Z"
+            booking_time="2099-01-01 10:00",
+            seat_class="economy",
+            price_paid=1000000
         ))
         db_session.commit()
 

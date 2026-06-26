@@ -82,10 +82,12 @@ def sample_flight_data():
     return {
         "origin": "Earth",
         "destination": "Mars",
-        "departure_time": "2099-01-01T09:00:00Z",
-        "arrival_time": "2099-01-01T17:00:00Z",
-        "price": 1000000,
-        "seats_available": 5
+        "departure_time": "2099-01-01 09:00",
+        "arrival_time": "2099-01-01 17:00",
+        "base_price": 1000000,
+        "economy_seats_available": 5,
+        "business_seats_available": 3,
+        "galaxium_seats_available": 1
     }
 
 

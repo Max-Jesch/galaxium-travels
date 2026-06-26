@@ -147,7 +147,7 @@ git push origin demo/missing-tests
    ```bash
    # Push a branch
    git push origin demo/missing-validation
-   
+
    # Open PR via GitHub UI
    # Wait for workflow to complete
    # Verify Bob's review appears
@@ -382,10 +382,10 @@ After the demo, you have two options for cleanup:
 
 ### Option 1: Automated Reset (Recommended)
 
-Use the provided reset script to automatically clean up everything:
+Use the provided reset script to automatically clean up everything. Run it from the **repository root**:
 
 ```bash
-./reset.sh
+./demos/bob-shell-pr-review/reset.sh
 ```
 
 This will:
@@ -397,7 +397,7 @@ This will:
 
 For non-interactive mode (use with caution):
 ```bash
-./reset.sh --force
+./demos/bob-shell-pr-review/reset.sh --force
 ```
 
 ### Option 2: Manual Cleanup

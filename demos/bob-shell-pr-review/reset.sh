@@ -1,10 +1,13 @@
 #!/bin/bash
 # reset.sh - Reset Galaxium Travels repository to pre-demo state
-# 
-# This script cleans up after completing the demo instructions in DEMO_RUNBOOK.md
+#
+# This script cleans up after completing the demo instructions in RUNBOOK.md
 # It removes demo branches, resets the database, and cleans build artifacts.
 #
-# Usage: ./reset.sh [--force]
+# Run from the repository root:
+#   ./demos/bob-shell-pr-review/reset.sh [--force]
+#
+# Options:
 #   --force: Skip confirmation prompts (use with caution)
 
 set -e  # Exit on error
@@ -56,13 +59,13 @@ confirm() {
     if [[ "$FORCE_MODE" == true ]]; then
         return 0
     fi
-    
+
     local prompt="$1"
     local response
     echo -e "${YELLOW}${prompt}${NC} (y/N): "
     read -r response
     case "$response" in
-        [yY][eE][sS]|[yY]) 
+        [yY][eE][sS]|[yY])
             return 0
             ;;
         *)
@@ -70,6 +73,13 @@ confirm() {
             ;;
     esac
 }
+
+# Resolve repo root — script may be invoked from any working directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
+# Change to repo root so all relative paths work correctly
+cd "$REPO_ROOT"
 
 # Banner
 clear
@@ -82,13 +92,13 @@ echo -e "  ${BLUE}•${NC} Removing build artifacts"
 echo ""
 
 # Verify we're in the right directory
-if [[ ! -f "DEMO_RUNBOOK.md" ]] || [[ ! -d "booking_system_backend" ]]; then
-    print_error "This doesn't appear to be the galaxium-travels repository root."
-    print_info "Please run this script from the repository root directory."
+if [[ ! -f "AGENTS.md" ]] || [[ ! -d "booking_system_backend" ]]; then
+    print_error "Could not locate the galaxium-travels repository root (expected AGENTS.md and booking_system_backend/)."
+    print_info "Resolved root: ${REPO_ROOT}"
     exit 1
 fi
 
-print_success "Verified repository location"
+print_success "Verified repository location: ${REPO_ROOT}"
 
 # Check for uncommitted changes
 if [[ -n $(git status --porcelain) ]]; then
@@ -283,11 +293,11 @@ if [[ -d "booking_system_inventory_hold_service/target" ]]; then
 fi
 
 # E2E tests cleanup
-if [[ -d "tests_e2e/__pycache__" ]]; then
-    rm -rf tests_e2e/__pycache__
+if [[ -d "e2e/__pycache__" ]]; then
+    rm -rf e2e/__pycache__
 fi
-if [[ -d "tests_e2e/.pytest_cache" ]]; then
-    rm -rf tests_e2e/.pytest_cache
+if [[ -d "e2e/.pytest_cache" ]]; then
+    rm -rf e2e/.pytest_cache
 fi
 
 # ============================================================================
@@ -308,7 +318,7 @@ echo ""
 print_info "Repository is now reset to pre-demo state"
 print_info "Next steps:"
 echo -e "  ${BLUE}1.${NC} Run ${CYAN}./start.sh${NC} to start the application with fresh data"
-echo -e "  ${BLUE}2.${NC} Or follow ${CYAN}DEMO_RUNBOOK.md${NC} to run the demo again"
+echo -e "  ${BLUE}2.${NC} Or follow ${CYAN}demos/bob-shell-pr-review/RUNBOOK.md${NC} to run the demo again"
 echo ""
 
 print_success "Done! 🚀"
