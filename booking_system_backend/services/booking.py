@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from models import User, Flight, Booking
 from schemas import BookingOut, ErrorResponse, SeatClass
+from services import promo as promo_service
 
 
 # Price multipliers for each seat class
@@ -12,7 +13,7 @@ SEAT_CLASS_MULTIPLIERS = {
 }
 
 
-def book_flight(db: Session, user_id: int, name: str, flight_id: int, seat_class: SeatClass = 'economy') -> BookingOut | ErrorResponse:
+def book_flight(db: Session, user_id: int, name: str, flight_id: int, seat_class: SeatClass = 'economy', promo_code: str | None = None) -> BookingOut | ErrorResponse:
     """Book a seat on a specific flight for a user in the specified seat class."""
     # Validate seat class
     if seat_class not in SEAT_CLASS_MULTIPLIERS:
@@ -65,6 +66,12 @@ def book_flight(db: Session, user_id: int, name: str, flight_id: int, seat_class
 
     # Calculate price based on seat class
     price_paid = int(flight.base_price * SEAT_CLASS_MULTIPLIERS[seat_class])
+
+    # Apply promo code discount if provided
+    if promo_code:
+        promo = promo_service.apply_promo(db, promo_code)
+        if promo:
+            price_paid = int(price_paid * (1 - promo.percent_off / 100))
 
     # Decrement the correct seat class counter
     if seat_class == 'economy':

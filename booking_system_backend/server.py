@@ -10,7 +10,8 @@ import httpx
 from db import SessionLocal, init_db, get_db
 from seed import seed
 from services import flight, user, booking
-from schemas import FlightOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration
+from schemas import FlightOut, BookingOut, UserOut, ErrorResponse, BookingRequest, UserRegistration, PromoValidationRequest, PromoValidationResult
+from services import promo as promo_service
 
 # Load environment variables from .env file
 load_dotenv()
@@ -100,6 +101,18 @@ def get_user_id(name: str, email: str) -> UserOut:
         if isinstance(result, ErrorResponse):
             raise Exception(result.details or result.error)
         return result
+    finally:
+        db.close()
+
+
+@mcp.tool()
+def validate_promo_code(code: str, price: int) -> PromoValidationResult:
+    """Validate a promo code and calculate the discounted price.
+    Provide the promo code string and the base price in cents.
+    Returns whether the code is valid, the discount percentage, discounted price, and savings."""
+    db = SessionLocal()
+    try:
+        return promo_service.validate_promo(db, code, price)
     finally:
         db.close()
 
@@ -241,7 +254,7 @@ def book_flight_endpoint(request: BookingRequest, db: Session = Depends(get_db))
     Optional seat_class: 'economy' (default), 'business', or 'galaxium'.
     Decrements available seats for the selected class if successful.
     """
-    return booking.book_flight(db, request.user_id, request.name, request.flight_id, request.seat_class)
+    return booking.book_flight(db, request.user_id, request.name, request.flight_id, request.seat_class, request.promo_code)
 
 
 @app.get("/bookings/{user_id}", response_model=list[BookingOut], tags=["Bookings"])
@@ -257,6 +270,13 @@ def cancel_booking_endpoint(booking_id: int, db: Session = Depends(get_db)):
     Increments available seats for the flight if successful.
     """
     return booking.cancel_booking(db, booking_id)
+
+
+@app.post("/promo/validate", response_model=PromoValidationResult, tags=["Promos"])
+def validate_promo_endpoint(request: PromoValidationRequest, db: Session = Depends(get_db)):
+    """Validate a promo code and return the discounted price.
+    Provide the promo code and the base price to apply the discount against."""
+    return promo_service.validate_promo(db, request.code, request.price)
 
 
 @app.post("/register", response_model=Union[UserOut, ErrorResponse], tags=["Users"])
@@ -288,7 +308,8 @@ def create_booking_from_hold(hold_data: dict, db: Session = Depends(get_db)):
         user_id=hold_data["travelerId"],
         name=hold_data["travelerName"],
         flight_id=hold_data["flightId"],
-        seat_class=hold_data["seatClass"]
+        seat_class=hold_data["seatClass"],
+        promo_code=hold_data.get("promoCode"),
     )
     if isinstance(result, ErrorResponse):
         raise HTTPException(status_code=400, detail=result.model_dump())

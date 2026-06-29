@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 # Load environment variables BEFORE importing db and models
 load_dotenv()
 
-from models import Base, User, Flight, Booking
+from models import Base, User, Flight, Booking, PromoCode
 from db import engine, SessionLocal
 from datetime import datetime, timedelta
 import random
@@ -107,6 +107,15 @@ def seed():
             price_paid=price_paid
         ))
     db.add_all(bookings)
+    db.commit()
+    # Add demo promo codes
+    from datetime import date
+    promos = [
+        PromoCode(code="SPACE20", percent_off=20, valid_from=date(2090, 1, 1), valid_until=date(2199, 12, 31), max_uses=1000, uses=0),
+        PromoCode(code="MARS10",  percent_off=10, valid_from=date(2090, 1, 1), valid_until=date(2199, 12, 31), max_uses=500,  uses=0),
+        PromoCode(code="FIRSTRIDE", percent_off=15, valid_from=date(2090, 1, 1), valid_until=date(2199, 12, 31), max_uses=100,  uses=0),
+    ]
+    db.add_all(promos)
     db.commit()
     db.close()
     print("Database seeded with elaborate demo data!")
