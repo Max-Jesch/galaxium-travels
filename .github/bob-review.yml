@@ -47,9 +47,9 @@ jobs:
 
           Then PRINT your code review to stdout — do NOT call write_to_file or any file-writing tool. Bracket the review with these two marker lines exactly, each on its own line:
 
-          <<<BOB_REVIEW_BEGIN_8f3a2b1c>>>
+          <<<BOB_REVIEW_BEGIN>>>
           ...your review markdown...
-          <<<BOB_REVIEW_END_8f3a2b1c>>>
+          <<<BOB_REVIEW_END>>>
 
           The review must contain:
           - A 1-2 sentence summary at the top.
@@ -64,13 +64,16 @@ jobs:
 
       - name: Extract review from Bob's stdout
         run: |
-          awk '/^<<<BOB_REVIEW_BEGIN_8f3a2b1c>>>$/{flag=1; next} /^<<<BOB_REVIEW_END_8f3a2b1c>>>$/{flag=0} flag' bob_output.txt > review_body.md
-          if [ ! -s review_body.md ]; then
-            echo "ERROR: review markers not found in Bob's output"
-            echo "--- Bob output ---"
-            cat bob_output.txt
-            exit 1
-          fi
+          python3 -c "
+          import re, sys
+          text = open('bob_output.txt').read()
+          m = re.search(r'<<<BOB_REVIEW_BEGIN>>>(.*?)<<<BOB_REVIEW_END>>>', text, re.DOTALL)
+          if m:
+              print(m.group(1).strip())
+          else:
+              print('_Bob did not produce a structured review. Raw output below._\n')
+              print(text)
+          " > review_body.md
           {
             echo "## 🤖 Bob's Review"
             echo ""
