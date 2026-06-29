@@ -46,6 +46,15 @@ export interface UserRegistration {
   email: string;
 }
 
+export interface PromoValidationResult {
+  valid: boolean;
+  code?: string;
+  percent_off?: number;
+  discounted_price?: number;
+  savings?: number;
+  error?: string;
+}
+
 export interface ErrorResponse {
   success: false;
   error: string;

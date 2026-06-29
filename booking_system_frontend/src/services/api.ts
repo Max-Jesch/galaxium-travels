@@ -8,6 +8,7 @@ import type {
   ErrorResponse,
   Quote,
   Hold,
+  PromoValidationResult,
 } from '../types';
 
 // Create axios instance with base configuration
@@ -133,6 +134,15 @@ export const getUserBookings = async (userId: number): Promise<Booking[]> => {
   const response = await api.get<Booking[]>(`/bookings/${userId}`);
   return response.data;
 };
+
+// ==================== Promo Code Endpoints ====================
+
+export const validatePromo = async (code: string, price: number): Promise<PromoValidationResult> => {
+  const response = await api.post<PromoValidationResult>('/promo/validate', { code, price });
+  return response.data;
+};
+
+// ==================== Booking Endpoints (continued) ====================
 
 /**
  * Cancel a booking

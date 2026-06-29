@@ -52,6 +52,21 @@ class BookingRequest(BaseModel):
     name: str
     flight_id: int
     seat_class: SeatClass = 'economy'  # Default to economy
+    promo_code: Optional[str] = None
+
+
+class PromoValidationRequest(BaseModel):
+    code: str
+    price: int  # Base price to apply discount against
+
+
+class PromoValidationResult(BaseModel):
+    valid: bool
+    code: Optional[str] = None
+    percent_off: Optional[int] = None
+    discounted_price: Optional[int] = None
+    savings: Optional[int] = None
+    error: Optional[str] = None
 
 
 class BookingOut(BaseModel):

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Flight, SeatClass, Quote, Hold } from '../../types';
+import type { Flight, SeatClass, Quote, Hold, PromoValidationResult } from '../../types';
 import { Modal, Button } from '../common';
 import {
   Plane,
@@ -11,9 +11,10 @@ import {
   Tag,
   Timer,
   Zap,
+  Ticket,
 } from 'lucide-react';
 import { formatCurrency, formatDate, calculateDuration } from '../../utils/formatters';
-import { createQuote, createHold, confirmHold, releaseHold } from '../../services/api';
+import { createQuote, createHold, confirmHold, releaseHold, validatePromo } from '../../services/api';
 import { storeHold, removeHold } from '../../utils/holdStorage';
 import { useUser } from '../../hooks/useUser';
 import toast from 'react-hot-toast';
@@ -35,6 +36,9 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
   const [quote, setQuote] = useState<Quote | null>(null);
   const [hold, setHold] = useState<Hold | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [promoInput, setPromoInput] = useState('');
+  const [promoResult, setPromoResult] = useState<PromoValidationResult | null>(null);
+  const [isPromoLoading, setIsPromoLoading] = useState(false);
 
   // Reset state when modal opens
   useEffect(() => {
@@ -44,6 +48,8 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
       setQuote(null);
       setHold(null);
       setTimeLeft(0);
+      setPromoInput('');
+      setPromoResult(null);
     }
   }, [isOpen]);
 
@@ -163,6 +169,25 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
       toast.error('Failed to get quote. Make sure the inventory service is running.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+    const basePrice = quote?.totalPrice ?? (selectedClassData?.price || 0);
+    setIsPromoLoading(true);
+    try {
+      const result = await validatePromo(promoInput.trim().toUpperCase(), basePrice);
+      setPromoResult(result);
+      if (!result.valid) {
+        toast.error(result.error || 'Invalid promo code');
+      } else {
+        toast.success(`${result.percent_off}% discount applied!`);
+      }
+    } catch {
+      toast.error('Failed to validate promo code');
+    } finally {
+      setIsPromoLoading(false);
     }
   };
 
@@ -334,15 +359,55 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
               {formatCurrency(quote?.pricePerSeat || 0)}
             </span>
           </div>
+          {promoResult?.valid && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-alien-green flex items-center gap-1">
+                <Ticket size={14} /> {promoResult.code} ({promoResult.percent_off}% off)
+              </span>
+              <span className="text-alien-green">−{formatCurrency(promoResult.savings || 0)}</span>
+            </div>
+          )}
           <div className="border-t border-white/10 pt-3 flex items-center justify-between">
             <span className="font-semibold text-star-white">Total</span>
             <span className="text-xl font-bold text-alien-green">
-              {formatCurrency(quote?.totalPrice || 0)}
+              {formatCurrency(promoResult?.valid ? (promoResult.discounted_price || 0) : (quote?.totalPrice || 0))}
             </span>
           </div>
           <p className="text-xs text-star-white/50">
             Quote valid for 24 hours · Price calculated by inventory service
           </p>
+        </div>
+
+        {/* Promo code input */}
+        <div className="glass-card p-4 bg-white/5 space-y-2">
+          <h4 className="text-sm font-semibold text-star-white flex items-center gap-2">
+            <Ticket size={14} className="text-star-white/60" /> Promo Code
+          </h4>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoInput}
+              onChange={(e) => {
+                setPromoInput(e.target.value.toUpperCase());
+                setPromoResult(null);
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+              placeholder="e.g. SPACE20"
+              className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-star-white placeholder-star-white/40 focus:outline-none focus:border-alien-green/60"
+            />
+            <Button
+              variant="secondary"
+              onClick={handleApplyPromo}
+              isLoading={isPromoLoading}
+              disabled={!promoInput.trim()}
+              className="shrink-0"
+            >
+              Apply
+            </Button>
+          </div>
+          {promoResult && !promoResult.valid && (
+            <p className="text-xs text-red-400">{promoResult.error}</p>
+          )}
         </div>
 
         <div className="flex gap-3">
@@ -401,10 +466,12 @@ export const BookingModal = ({ isOpen, onClose, flight, onSuccess }: BookingModa
       <div className="flex items-center justify-between p-4 rounded-xl bg-cosmic-gradient">
         <div className="flex items-center gap-2">
           <DollarSign className="text-white" size={20} />
-          <span className="text-white font-semibold">Total</span>
+          <span className="text-white font-semibold">
+            Total{promoResult?.valid ? ` (${promoResult.percent_off}% off)` : ''}
+          </span>
         </div>
         <span className="text-xl font-bold text-white">
-          {formatCurrency(quote?.totalPrice || 0)}
+          {formatCurrency(promoResult?.valid ? (promoResult.discounted_price || 0) : (quote?.totalPrice || 0))}
         </span>
       </div>
 
