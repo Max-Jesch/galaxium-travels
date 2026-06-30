@@ -42,47 +42,27 @@ jobs:
         run: |
           bob --accept-license --auth-method api-key -p "$(cat <<'EOF'
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
-          You must complete ALL analysis steps before writing a single word of the review.
-          Do not begin writing findings until you have finished every sub-task in Step 3.
+          Complete all investigation before writing a single word of the review.
 
           ## Step 1 — understand the repo
-          Read AGENTS.md. Internalise the footguns, conventions, and architectural constraints.
+          Read AGENTS.md to understand this repo's conventions, architecture, and known footguns.
 
           ## Step 2 — read the diff
-          Read pr.diff using the read_file tool (file_path="pr.diff").
-          Extract a list of every file that was modified and every symbol (function, class, endpoint,
-          schema field) that was added, changed, or removed. Keep this list in mind for Step 3.
+          Read pr.diff (file_path="pr.diff"). Note every file touched and every symbol that was
+          added, changed, or removed.
 
-          ## Step 3 — mandatory investigation (complete every sub-task; do NOT skip any)
-          Work through each item below in order. Do not start writing the review until all are done.
-
-          3a. For every modified file: read the FULL file, not just the diff hunks.
-              You need the complete context — surrounding logic, imports, error handling — to reason
-              correctly about whether a change is safe.
-
-          3b. For every symbol that was added, changed, or removed: use the grep tool to find every
-              caller and reference in the entire repo. Confirm with your own eyes (read_file) that
-              each call site is still correct after the change. Do not assume — verify.
-
-          3c. If any endpoint or MCP tool was added or changed: read the consuming side.
-              - REST endpoint added/changed → read booking_system_frontend/src/services/api.ts
-                and any relevant page/component that calls it.
-              - MCP tool added/changed → read the corresponding REST handler in server.py and
-                confirm the tool and handler stay in sync.
-              - Java proxy endpoint involved → read the Java controller and the Python proxy stub.
-
-          3d. If any Pydantic schema, SQLAlchemy model, or DB column was changed: grep for every
-              place that schema or model is imported or instantiated, and read those files.
-
-          3e. Cross-check every finding candidate against AGENTS.md.
-              If AGENTS.md explicitly describes the pattern as intentional, it is NOT a bug.
-
-          3f. For each candidate finding: re-read the exact lines in the source file one more time
-              to confirm the issue is real before adding it to your list. If you cannot point to a
-              specific line you have read, drop the finding.
+          ## Step 3 — investigate
+          For each touched file, read it in full — the diff alone lacks the context needed to reason
+          about correctness. Then grep the repo for every changed symbol and read the call sites to
+          verify nothing is broken. Follow the change across service boundaries: if an endpoint,
+          schema, or shared type changed, check the consumers on the other side (frontend, MCP tools,
+          Java service, tests). Before adding any finding to your list, re-read the relevant lines in
+          the source file to confirm the issue is real. If a pattern looks suspicious but AGENTS.md
+          describes it as intentional, it is not a bug. If you are uncertain, read more — do not
+          write a hedged finding.
 
           ## Step 4 — write the review
-          Only after completing all of Step 3, output the review to stdout.
+          Only after finishing Step 3, output the review to stdout.
           Do NOT call write_to_file or any file-writing tool. Bracket the review with these two
           marker lines exactly, each on its own line:
 
