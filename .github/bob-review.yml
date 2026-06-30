@@ -42,10 +42,28 @@ jobs:
         run: |
           bob --accept-license --auth-method api-key -p "$(cat <<'EOF'
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
-          Read AGENTS.md first to understand this repo's patterns and constraints.
+
+          ## Step 1 — understand the repo
+          Read AGENTS.md first to understand this repo's patterns, footguns, and conventions.
+
+          ## Step 2 — read the diff
           The PR diff is in the file pr.diff. Read it using the read_file tool with file_path="pr.diff".
 
-          Then PRINT your code review to stdout — do NOT call write_to_file or any file-writing tool. Bracket the review with these two marker lines exactly, each on its own line:
+          ## Step 3 — deep analysis (do this before writing the review)
+          For every file touched by the diff:
+          a. Read the full file to understand the surrounding context, not just the changed lines.
+          b. Identify every function, class, or symbol that was added, removed, or renamed.
+          c. Use the grep tool to search the entire repo for callers and usages of those symbols.
+             Check whether any call sites are now broken, passing wrong arguments, or relying on
+             behaviour that the diff changed.
+          d. If the diff touches a REST endpoint or an MCP tool, verify the other side of the
+             contract (e.g. frontend api.ts, MCP tool definitions, Java proxy calls) is consistent.
+          e. If the diff touches shared schemas, models, or DB migrations, check all consumers.
+          f. Cross-reference every change against the footguns and conventions in AGENTS.md.
+
+          ## Step 4 — write the review
+          PRINT your code review to stdout — do NOT call write_to_file or any file-writing tool.
+          Bracket the review with these two marker lines exactly, each on its own line:
 
           <<<BOB_REVIEW_BEGIN>>>
           ...your review markdown...
