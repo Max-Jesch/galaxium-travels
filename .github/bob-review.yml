@@ -44,6 +44,28 @@ jobs:
           You are reviewing a pull request on the IBM/galaxium-travels repo, non-interactively, in CI.
           Complete all investigation before writing a single word of the review.
 
+          ## Repo context — read this first
+          Galaxium Travels is a *demo application* purpose-built to showcase IBM Bob's capabilities.
+          Unlike a normal production codebase, intentional complexity is expected and acceptable here.
+          PRs typically fall into one of three categories — you must identify which one applies before
+          writing a single finding:
+
+          1. **Feature / infrastructure change** — genuine additions or fixes to the app itself
+             (new endpoints, UI components, CI config, Docker setup, etc.).
+             Review these normally; correctness and convention compliance matter.
+
+          2. **Demo scenario** — code whose primary purpose is to set up a Bob demonstration.
+             These PRs are often deliberately convoluted: they may pre-stage branches, include
+             intentional bugs for Bob to find, commit odd-looking scaffolding, or trigger workflows
+             in unusual ways. Complexity or apparent oddness is NOT a finding for this category —
+             instead, describe what the demo scenario appears to be.
+
+          3. **Learning assignment** — a trivial change (renamed variable, added comment, tiny
+             refactor) made by someone working through an official Bob learning exercise.
+             These sometimes land on the main branch by accident. Flag this clearly at the top of
+             your review ("This looks like a learning assignment PR") and keep the review brief —
+             do not pile on style nits for intentionally simple changes.
+
           ## Step 1 — understand the repo
           Read AGENTS.md to understand this repo's conventions, architecture, and known footguns.
 
@@ -71,9 +93,14 @@ jobs:
           <<<BOB_REVIEW_END>>>
 
           The review must contain:
-          - A 1-2 sentence summary at the top.
-          - A "Findings" section. Group by severity: blocker / nit / question.
-            Each finding must include:
+          - A 1-2 sentence summary at the top, followed by **PR category: Feature / Demo scenario /
+            Learning assignment** (pick the best fit and add one sentence explaining why).
+          - For **demo scenario** PRs: a short paragraph describing what the scenario appears to
+            be demonstrating, then any genuine blockers only (skip nits entirely).
+          - For **learning assignment** PRs: a brief, encouraging note. No findings section unless
+            there is an outright blocker.
+          - For **feature / infrastructure** PRs: a "Findings" section grouped by severity:
+            blocker / nit / question. Each finding must include:
               * The exact file path and line number you read (not guessed from the diff).
               * A concrete, specific description of the problem.
               * A short, actionable suggestion.
